@@ -182,6 +182,7 @@ input.acc-note{flex:1;min-width:80px;background:rgba(255,255,255,0.06);border:1p
     <p style="font-size:13px;color:#7a9a7a;line-height:1.6;margin-bottom:12px">Copy and paste to your coach after each session.</p>
     <div class="report-box" id="report-box"></div>
     <button class="btn btn-green" id="copy-btn">Copy and Paste to Coach</button>
+    <button class="btn btn-gold" id="ask-claude-btn" style="margin-top:8px">Ask Claude</button>
     <div class="banner">
       <h4>Getting an update from coach?</h4>
       <p>Export your data before replacing this file. Save the code in Notes, then import it into the new version.</p>
@@ -954,6 +955,11 @@ document.getElementById("copy-btn").addEventListener("click", function() {
 navigator.clipboard.writeText(document.getElementById("report-box").textContent)
 .then(function() { showToast("Copied - paste to coach!"); })
 .catch(function() { showToast("Select text above and copy manually"); });
+});
+document.getElementById("ask-claude-btn").addEventListener("click", function() {
+var report = document.getElementById("report-box").textContent;
+var prompt = "Here is my workout session data from Elk Ready (a 8-week hunting fitness program):\n\n" + report + "\n\nPlease analyse my session and give me feedback on my performance, any patterns you notice, and what I should focus on next session.";
+window.open("https://claude.ai/new?q=" + encodeURIComponent(prompt), "_blank");
 });
 
 // Render
