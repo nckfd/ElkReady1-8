@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Elk Ready">
+<meta name="theme-color" content="#0d1a0f">
+<title>Elk Ready</title>
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Elk+Ready%22%2C%22short_name%22%3A%22Elk+Ready%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230d1a0f%22%2C%22theme_color%22%3A%22%230d1a0f%22%7D">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Serif+4:wght@300;400;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1a0f;--bg2:#111a14;--bdr:#2a3a2a;--gold:#c8a96e;--grn:#7eb8a4;--pur:#a07ec8;--red:#c87e7e;--amber:#c8a030;--txt:#d4c5a0;--mut:#a09080;--dim:#5a7a5a}
+html,body{min-height:100vh;background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 50%,#0a1510 100%);color:var(--txt);font-family:'Source Serif 4',Georgia,serif;font-size:15px;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+.screen{display:none;min-height:100vh}.screen.active{display:block}
+.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;padding:16px 20px;background:rgba(13,26,15,0.97);border-bottom:1px solid var(--bdr);backdrop-filter:blur(10px)}
+.topbar-title{flex:1}.topbar-title h2{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold)}.topbar-title p{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:2px}
+.appheader{padding:22px 20px 14px;border-bottom:1px solid var(--bdr);background:rgba(0,0,0,0.3);display:flex;justify-content:space-between;align-items:flex-start}
+.appheader h1{font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);letter-spacing:2px}
+.appheader p{font-size:11px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;margin-top:4px}
+.week-row{display:flex;gap:8px;padding:14px 20px;overflow-x:auto;border-bottom:1px solid #1a2a1a;scrollbar-width:none}
+.week-row::-webkit-scrollbar{display:none}
+.wbtn{flex-shrink:0;min-width:66px;padding:9px 12px;border-radius:8px;border:1px solid var(--bdr);background:rgba(255,255,255,0.03);color:var(--dim);cursor:pointer;font-family:'Source Serif 4',serif;text-align:center}
+.wbtn.on{border-color:var(--gold);background:rgba(200,169,110,0.15);color:var(--gold)}
+.wbtn strong{display:block;font-size:15px}.wbtn span{display:block;font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.body{padding:20px}
+.sl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.card{background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:10px}
+.goalcard{border-radius:12px;margin-bottom:20px}
+.goalhdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.goalhdr h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold)}
+.wklbl{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.goaldesc{font-size:13px;color:var(--mut);line-height:1.7}
+.ebar{display:flex;gap:4px;align-items:center;margin-top:12px}
+.ebar span{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-right:8px}
+.epip{width:26px;height:5px;border-radius:3px;background:#1a2a1a}
+.sesscard{background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:10px;padding:14px 16px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-left-width:3px;-webkit-user-select:none;user-select:none}
+.sesscard:active{background:rgba(255,255,255,0.08)}
+.sessleft{display:flex;align-items:center;gap:12px}
+.sessicon{font-size:22px}.sessname{font-size:14px;font-weight:600;color:var(--txt)}.sessday{font-size:11px;color:var(--dim);margin-top:2px}.sesssch{font-size:10px;color:#6a8a6a;margin-top:2px}
+.sessright{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.logbadge{font-size:9px;background:rgba(200,169,110,0.2);color:var(--gold);padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:1px}
+.condcard{background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:10px;padding:14px 16px;margin-bottom:8px;border-left-width:3px}
+.condtop{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.condname{font-size:14px;font-weight:600;color:var(--txt)}.conddet{font-size:11px;color:#6a8a6a;margin-top:3px}
+.excard{background:rgba(255,255,255,0.04);border:1px solid #1a2a1a;border-radius:10px;padding:14px;margin-bottom:10px}
+.exname{font-size:14px;color:var(--txt);font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.tbadge{font-size:9px;background:rgba(126,184,164,0.2);color:var(--grn);padding:2px 8px;border-radius:10px;letter-spacing:2px}
+.exmeta{font-size:11px;color:var(--dim);margin-bottom:12px}
+.setsrow{display:flex;gap:8px;flex-wrap:wrap}
+.setcol{display:flex;flex-direction:column;align-items:center;gap:3px}
+.setlbl{font-size:9px;color:#4a6a4a;letter-spacing:1px;text-transform:uppercase}
+.si{width:60px;background:rgba(255,255,255,0.08);border:1px solid #3a4a3a;border-radius:6px;color:var(--txt);font-size:13px;padding:7px 4px;text-align:center;outline:none;font-family:'Source Serif 4',serif;-webkit-appearance:none}
+.si:focus{border-color:var(--gold)}.si.reps{border-color:#3a5a4a;color:var(--grn)}.si.reps:focus{border-color:var(--grn)}
+.fincard{border-radius:10px;padding:14px;margin-bottom:12px}
+.fincard.cardio{background:rgba(126,158,200,0.08);border:1px solid #3a5a7a}
+.fincard.strength{background:rgba(200,169,110,0.08);border:1px solid #5a4a2a}
+.fintype{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.finname{font-size:14px;color:var(--txt);font-weight:600}.finden{font-size:11px;color:#6a8a6a;margin-top:4px}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{padding:7px 11px;border-radius:18px;cursor:pointer;font-size:12px;border:1px solid var(--bdr);background:rgba(255,255,255,0.03);color:var(--dim);font-family:'Source Serif 4',serif;-webkit-user-select:none;user-select:none}
+.chip:active{opacity:.7}
+.ta{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:8px;color:var(--mut);font-size:13px;padding:10px;min-height:60px;resize:vertical;outline:none;font-family:'Source Serif 4',serif}
+.ta:focus{border-color:var(--gold)}
+.ta-sm{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:6px;color:var(--mut);font-size:12px;padding:8px;min-height:44px;resize:none;outline:none;font-family:'Source Serif 4',serif;margin-top:8px}
+.ta-sm:focus{border-color:var(--grn)}
+.btn{display:block;width:100%;padding:14px;border-radius:10px;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:'Source Serif 4',serif;border:none;text-align:center}
+.btng{background:rgba(200,169,110,0.12);border:1px solid var(--gold)!important;color:var(--gold)}
+.btngrn{background:rgba(126,184,164,0.12);border:1px solid var(--grn)!important;color:var(--grn)}
+.btnred{background:rgba(200,80,80,0.12);border:1px solid var(--red)!important;color:var(--red)}
+.btnbk{background:none;border:1px solid var(--bdr)!important;color:var(--dim);width:auto;padding:6px 14px;font-size:12px;border-radius:6px}
+.btndim{background:rgba(255,255,255,0.04);border:1px solid var(--bdr)!important;color:var(--dim);font-size:11px;padding:10px}
+.mt{margin-top:10px}
+.rbox{background:rgba(0,0,0,0.5);border:1px solid var(--bdr);border-radius:10px;padding:16px;font-size:12px;color:var(--mut);white-space:pre-wrap;line-height:1.8;font-family:'Courier New',monospace;margin-bottom:12px;max-height:50vh;overflow-y:auto}
+.expbanner{background:rgba(200,169,110,0.07);border:1px solid #5a4a2a;border-radius:10px;padding:16px;margin-top:14px}
+.expbanner h4{font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.expbanner p{font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:10px}
+.dmsec{background:rgba(255,255,255,0.03);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:16px}
+.dmsec h3{font-family:'Playfair Display',serif;font-size:16px;margin-bottom:6px}
+.dmsec p{font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:12px}
+.dmsec .ta{min-height:80px;font-size:11px;font-family:monospace;margin-bottom:10px}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(13,26,15,0.97);border:1px solid var(--grn);color:var(--grn);padding:10px 22px;border-radius:20px;font-size:12px;font-weight:600;letter-spacing:1px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200;white-space:nowrap}
+.toast.show{opacity:1}.toast.err{border-color:var(--red);color:var(--red)}
+.bottomnav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,26,15,0.97);border-top:1px solid var(--bdr);display:flex;z-index:20;backdrop-filter:blur(10px)}
+.navbtn{flex:1;padding:12px 4px 16px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:none;color:var(--dim);font-family:'Source Serif 4',serif;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+.navbtn.on{color:var(--gold)}
+.navbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.padbottom{height:80px}.spacer{height:16px}
+.flsec{font-size:13px;color:var(--gold);font-weight:600;margin-bottom:14px}
+.fllbl{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;margin-top:12px}
+.accrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.accinput{flex:1;background:rgba(255,255,255,0.06);border:1px solid #3a4a3a;border-radius:6px;color:var(--txt);font-size:13px;padding:7px 10px;outline:none;font-family:'Source Serif 4',serif;margin-right:8px}
+.accinput:focus{border-color:var(--gold)}
+.accnum{width:58px;background:rgba(255,255,255,0.08);border:1px solid #3a4a3a;border-radius:6px;font-size:13px;padding:7px 4px;text-align:center;outline:none;font-family:'Source Serif 4',serif;color:var(--txt);-webkit-appearance:none}
+.accnum:focus{border-color:var(--gold)}
+.accnote{flex:1;min-width:80px;background:rgba(255,255,255,0.06);border:1px solid #3a4a3a;border-radius:6px;color:var(--mut);font-size:12px;padding:7px 8px;outline:none;font-family:'Source Serif 4',serif}
+.exitrow{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.elabel{font-size:12px;color:var(--gold);font-weight:600}.etarget{font-size:11px;color:var(--dim);margin-top:2px}
+#save-indicator{font-size:11px;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<!-- OVERVIEW -->
+
+<div id="scr-overview" class="screen active">
+  <div class="appheader">
+    <div><h1>Elk Ready</h1><p>Phase 1 - Weeks 1-8 - Full Body DUP</p></div>
+    <span id="save-indicator"></span>
+  </div>
+  <div class="week-row" id="week-row"></div>
+  <div class="body">
+    <div class="card goalcard" id="goal-card"></div>
+    <div class="sl">Tap a session to log and share</div>
+    <div id="sess-list"></div>
+    <div class="sl" style="margin-top:8px">Conditioning</div>
+    <div id="cond-list"></div>
+    <div id="exit-stds"></div>
+    <div class="padbottom"></div>
+  </div>
+</div>
+
+<!-- DAY VIEW -->
+
+<div id="scr-day" class="screen">
+  <div class="topbar">
+    <button class="btn btnbk" onclick="showOverview()">Back</button>
+    <div class="topbar-title"><h2 id="day-title"></h2><p id="day-sub"></p></div>
+  </div>
+  <div class="body">
+    <div class="sl">Log Weights &amp; Reps</div>
+    <div id="ex-list"></div>
+    <div class="sl" style="margin-top:4px">Finisher</div>
+    <div id="fin-card"></div>
+    <div class="sl">How Did It Feel?</div>
+    <div class="card" id="feel-card"></div>
+    <div class="sl" style="margin-top:4px">Additional Accessory Work</div>
+    <div id="acc-list"></div>
+    <button class="btn btndim mt" onclick="addAcc()">+ Add Exercise</button>
+    <div class="spacer"></div>
+    <div class="sl">Session Notes</div>
+    <textarea class="ta" id="sess-notes" placeholder="PRs, how it felt, anything off..."></textarea>
+    <div class="sl" style="margin-top:12px">Message for Coach</div>
+    <textarea class="ta" id="coach-msg" placeholder="Questions, concerns, anything affecting training..." style="margin-bottom:20px"></textarea>
+    <button class="btn btngrn" onclick="showShare()">Share This Session with Coach</button>
+    <div class="padbottom"></div>
+  </div>
+</div>
+
+<!-- SHARE -->
+
+<div id="scr-share" class="screen">
+  <div class="topbar">
+    <button class="btn btnbk" onclick="showDay()">Back</button>
+    <div class="topbar-title"><h2>Coach Report</h2><p id="share-sub"></p></div>
+  </div>
+  <div class="body">
+    <p style="font-size:13px;color:#7a9a7a;line-height:1.6;margin-bottom:12px">Copy and paste to your coach after each session.</p>
+    <div class="rbox" id="rbox"></div>
+    <button class="btn btngrn" onclick="copyRpt()">Copy &amp; Paste to Coach</button>
+    <div class="expbanner">
+      <h4>Getting an update from coach?</h4>
+      <p>Export your data before replacing this file. Save the code in Notes, then import it into the new version.</p>
+      <button class="btn btng" style="padding:11px;font-size:11px" onclick="showData()">Go to Data &amp; Backup</button>
+    </div>
+    <button class="btn btnbk mt" style="width:100%;padding:12px;text-align:center" onclick="showOverview()">Back to Overview</button>
+    <div class="padbottom"></div>
+  </div>
+</div>
+
+<!-- DATA -->
+
+<div id="scr-data" class="screen">
+  <div class="topbar">
+    <button class="btn btnbk" onclick="showOverview()">Back</button>
+    <div class="topbar-title"><h2>Data &amp; Backup</h2><p>Export before updates - Import to restore</p></div>
+  </div>
+  <div class="body">
+    <div class="dmsec">
+      <h3 style="color:var(--grn)">Export My Data</h3>
+      <p>Copies all your logs to clipboard as a backup code. Paste into Notes app. Do this before every app update.</p>
+      <button class="btn btngrn" onclick="exportData()">Copy Export Code to Clipboard</button>
+      <div style="margin-top:10px"><div class="sl">Or copy manually</div>
+      <textarea class="ta" id="export-box" readonly placeholder="Tap Export above..." style="font-size:10px;font-family:monospace;min-height:80px"></textarea></div>
+    </div>
+    <div class="dmsec">
+      <h3 style="color:var(--gold)">Import / Restore Data</h3>
+      <p>Paste your export code below to restore all your data after installing an update.</p>
+      <textarea class="ta" id="import-input" placeholder="Paste your export code here..." style="font-size:10px;font-family:monospace;min-height:80px;margin-bottom:10px"></textarea>
+      <button class="btn btng" onclick="doImport()">Restore My Data</button>
+    </div>
+    <div class="dmsec">
+      <h3 style="color:var(--red)">Clear All Data</h3>
+      <p>Permanently deletes all your logged data. Cannot be undone. Export first.</p>
+      <button class="btn btnred" onclick="clearData()">Clear All Data</button>
+    </div>
+    <div class="padbottom"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+
+<nav class="bottomnav">
+  <button class="navbtn on" id="nav-home" onclick="showOverview()">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Program
+  </button>
+  <button class="navbtn" id="nav-data" onclick="showData()">
+    <svg viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29"/></svg>Backup
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Program Data ──────────────────────────────────────────────────────
+
+var WG = {
+  1:{label:"Orientation",    desc:"Establish working weights. Leave 2-3 reps in the tank. Log everything as a baseline. No PRs today.",effort:1},
+  2:{label:"Solidify",       desc:"Repeat Week 1 weights if they felt hard, or make first small jumps. Focus on nailing 3010 tempo Wednesday.",effort:2},
+  3:{label:"First Push",     desc:"Begin linear progression in earnest. Add prescribed weight to every main lift. The program officially starts.",effort:3},
+  4:{label:"Build",          desc:"Continue progression. TUT sets should feel like real work. Ruck increases to 30 lbs. Monitor recovery.",effort:4},
+  5:{label:"Peak Volume",    desc:"All three schemes should feel challenging. Heavy sets should hit 8-9/10 on last set. Push conditioning durations.",effort:5},
+  6:{label:"Consolidate",    desc:"Quality over chasing numbers. Tempo discipline non-negotiable. Ruck increases to 35 lbs.",effort:4},
+  7:{label:"Deload",         desc:"Drop volume 30-40%. Keep weights identical. Flush fatigue, stay primed. Finishers drop to 12 min.",effort:2},
+  8:{label:"Deload + Assess",desc:"Same volume as Week 7. Assess what's working. By Friday you should feel fresh and ready for Phase 2.",effort:1}
+};
+
+var EC = ["","#3a5a3a","#4a7a4a","#7a9a4a","#c8a030","#c87030","#c85030","#7a9a4a","#3a5a3a"];
+
+var FIN = {
+  A:{odd:{l:"Incline Treadmill Walk",d:"12-15 min @ 8-10% grade, moderate pace",t:"cardio"},even:{l:"Sled Push / Step-up Complex",d:"5x20 yds sled OR 3x10/leg weighted step-ups",t:"strength"}},
+  B:{odd:{l:"Farmer's Carry Ladder",d:"3 lengths, increasing weight each length",t:"strength"},even:{l:"Incline Treadmill Walk",d:"12-15 min @ 8-10% grade, moderate pace",t:"cardio"}},
+  C:{odd:{l:"Zone 2 Run",d:"12-15 min, fully conversational pace",t:"cardio"},even:{l:"Farmer's Carry Ladder",d:"3 lengths, increasing weight each length",t:"strength"}}
+};
+
+var SESS = {
+  A:{label:"Lift A - Heavy",day:"Monday",icon:"🏋️",scheme:"4x3-5 reps | 3 min main, 2 min accessories",color:"#c8a96e",
+    ex:[{id:"squat",n:"Back Squat",s:4,r:"3-5",rest:"3 min",main:true},
+        {id:"pullup",n:"Weighted Pull-ups",s:4,r:"3-5",rest:"3 min",main:true},
+        {id:"dbrdl",n:"DB Romanian Deadlift",s:3,r:"5-6",rest:"2 min"},
+        {id:"dbbench",n:"DB Bench Press",s:3,r:"5-6",rest:"2 min"},
+        {id:"pallof",n:"Pallof Press",s:3,r:"8/side",rest:"2 min"}]},
+  B:{label:"Lift B - TUT",day:"Wednesday",icon:"🔥",scheme:"3x12-15 reps | Tempo: 3010 | Rest: 60 sec",color:"#7eb8a4",
+    ex:[{id:"rdl",n:"Romanian Deadlift",s:3,r:"12-15",rest:"60 sec",tempo:true},
+        {id:"latpull",n:"Lat Pulldown",s:3,r:"12-15",rest:"60 sec",tempo:true},
+        {id:"incline",n:"DB Incline Press",s:3,r:"12-15",rest:"60 sec",tempo:true},
+        {id:"bss",n:"DB Bulgarian Split Squat",s:3,r:"12/leg",rest:"60 sec",tempo:true},
+        {id:"deadbug",n:"Dead Bug",s:3,r:"10/side",rest:"60 sec",tempo:true}]},
+  C:{label:"Lift C - Medium",day:"Friday",icon:"💪",scheme:"4x6-8 reps | 2 min main, 60 sec accessories",color:"#a07ec8",
+    ex:[{id:"squat2",n:"Back Squat",s:4,r:"6-8",rest:"2 min",main:true},
+        {id:"bbench",n:"Barbell Bench Press",s:4,r:"6-8",rest:"2 min",main:true},
+        {id:"brow2",n:"Barbell Row",s:4,r:"6-8",rest:"2 min",main:true},
+        {id:"dbohp",n:"DB Overhead Press",s:3,r:"6-8",rest:"60 sec"},
+        {id:"stepup",n:"DB Step-ups",s:3,r:"8/leg",rest:"60 sec"},
+        {id:"carry",n:"Farmer's Carry",s:3,r:"40 yds",rest:"60 sec"}]}
+};
+
+var COND = {
+  tue:{label:"Run",day:"Tuesday",icon:"🏃",color:"#7e9ec8",
+    det:function(w){return "30-40 min | Zone 2 - fully conversational pace";}},
+  thu:{label:"Ruck",day:"Thursday",icon:"🎒",color:"#c87e7e",
+    det:function(w){return "45-60 min | "+(w<=3?25:w<=6?30:35)+" lbs | Hilly terrain or incline treadmill (6-10%)"}}
+};
+
+var FL = ["","Rough","Tired","OK","Good","Great"];
+var FE = ["","💀","😓","😐","💪","🔥"];
+var RC = ["","#3a5c3a","#4a7a3a","#6a8a3a","#8a9a3a","#c8a030","#c88030","#c86030","#c84030","#c02020","#a01010"];
+var SA = ["Quads","Hams","Glutes","Low Back","Up Back","Shoulders","Arms","Knees","Hips","Calves"];
+var SO = ["Back Squat","RDL","Bench","Row","Pull-ups"];
+
+// ── Storage ───────────────────────────────────────────────────────────
+
+var LS_KEY = "elk-ready-v4";
+var db = {};
+var st = {week:1, sess:"A"};
+
+function loadDB(){
+  try{ var r=localStorage.getItem(LS_KEY); if(r) db=JSON.parse(r); }catch(e){ db={}; }
+}
+
+function saveDB(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify(db));
+    var ind=document.getElementById("save-indicator");
+    if(ind){ ind.textContent="Saved"; ind.style.color="var(--grn)"; setTimeout(function(){ ind.textContent=""; },1500); }
+  }catch(e){
+    var ind=document.getElementById("save-indicator");
+    if(ind){ ind.textContent="Not saving"; ind.style.color="var(--red)"; }
+  }
+}
+
+function g(k){ return db[k]||""; }
+function gN(k){ return Number(db[k])||null; }
+function gA(k){ return db[k]?db[k].split(",").filter(Boolean):[]; }
+function sv(k,v){ if(v===""||v===null||v===undefined){delete db[k];}else{db[k]=String(v);} saveDB(); }
+function tog(k,v){ var a=gA(k); var n=a.indexOf(v)>=0?a.filter(function(x){return x!==v;}):[].concat(a,[v]); sv(k,n.join(",")); }
+
+// Key builders
+function lk(w,sk,id,i){ return "w"+w+"-"+sk+"-"+id+"-s"+i; }
+function rk(w,sk,id,i){ return "w"+w+"-"+sk+"-"+id+"-r"+i; }
+function nk(w,sk){ return "w"+w+"-"+sk+"-note"; }
+function mk(w,sk){ return "w"+w+"-"+sk+"-msg"; }
+function ck(w,sk,f){ return "w"+w+"-"+sk+"-ci-"+f; }
+function condKey(w,k){ return "cond-"+w+"-"+k+"-note"; }
+function finKey(w,sk){ return "w"+w+"-"+sk+"-fin-note"; }
+function accCountKey(w,sk){ return "w"+w+"-"+sk+"-acc-count"; }
+function ak(w,sk,i,f){ return "w"+w+"-"+sk+"-acc-"+i+"-"+f; }
+
+function getAccCount(w,sk){ return parseInt(g(accCountKey(w,sk)))||0; }
+
+function hasLogs(w,sk){
+  return SESS[sk].ex.some(function(e){
+    return [1,2,3,4].slice(0,e.s).some(function(i){ return db[lk(w,sk,e.id,i)]||db[rk(w,sk,e.id,i)]; });
+  });
+}
+
+// ── Export / Import ───────────────────────────────────────────────────
+
+function exportData(){
+  try{
+    var code=btoa(unescape(encodeURIComponent(JSON.stringify(db))));
+    document.getElementById("export-box").value=code;
+    navigator.clipboard.writeText(code).then(function(){ toast("Export code copied - paste into Notes app"); }).catch(function(){ toast("Code shown below - copy it manually"); });
+  }catch(e){ toast("Export failed","err"); }
+}
+
+function doImport(){
+  var raw=document.getElementById("import-input").value.trim();
+  if(!raw){ toast("Paste your export code first","err"); return; }
+  try{
+    db=JSON.parse(decodeURIComponent(escape(atob(raw))));
+    saveDB();
+    document.getElementById("import-input").value="";
+    toast("Data restored!");
+    renderOverview();
+  }catch(e){ toast("Invalid code - check and try again","err"); }
+}
+
+function clearData(){
+  if(!confirm("Delete ALL data? Cannot be undone. Export first if you want a backup.")) return;
+  db={};
+  localStorage.removeItem(LS_KEY);
+  toast("All data cleared");
+  renderOverview();
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────
+
+var _tt;
+function toast(msg,type){
+  var el=document.getElementById("toast");
+  el.textContent=msg;
+  el.className="toast show"+(type?" "+type:"");
+  clearTimeout(_tt);
+  _tt=setTimeout(function(){ el.classList.remove("show"); },2200);
+}
+
+// ── Navigation ────────────────────────────────────────────────────────
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
+  document.getElementById("scr-"+id).classList.add("active");
+  window.scrollTo(0,0);
+  document.querySelectorAll(".navbtn").forEach(function(b){ b.classList.remove("on"); });
+  if(id==="overview"||id==="day"||id==="share") document.getElementById("nav-home").classList.add("on");
+  if(id==="data") document.getElementById("nav-data").classList.add("on");
+}
+
+function showOverview(){ renderOverview(); show("overview"); }
+function showDay(){ renderDay(); show("day"); }
+function showShare(){ renderShare(); show("share"); }
+function showData(){ document.getElementById("export-box").value=""; document.getElementById("import-input").value=""; show("data"); }
+
+// ── Render Overview ───────────────────────────────────────────────────
+
+function renderOverview(){
+  var w=st.week, odd=w%2!==0, wg=WG[w];
+
+  var weekHtml="";
+  for(var n=1;n<=8;n++){
+    weekHtml+='<button class="wbtn'+(n===w?" on":"")+'" onclick="selWeek('+n+')"><strong>Wk '+n+'</strong><span>'+WG[n].label.split(" ")[0]+'</span></button>';
+  }
+  document.getElementById("week-row").innerHTML=weekHtml;
+
+  var pips="";
+  for(var i=0;i<5;i++) pips+='<div class="epip" style="background:'+(i<wg.effort?EC[w]:"#1a2a1a")+'"></div>';
+  document.getElementById("goal-card").innerHTML=
+    '<div class="goalhdr"><div><div class="wklbl">Week '+w+' Goal</div><h3>'+wg.label+'</h3></div><div style="font-size:10px;color:var(--dim)">'+(odd?"ODD":"EVEN")+' WEEK</div></div>'+
+    '<p class="goaldesc">'+wg.desc+'</p>'+
+    '<div class="ebar"><span>Effort</span>'+pips+'</div>';
+
+  var sessHtml="";
+  var keys=["A","B","C"];
+  for(var si=0;si<keys.length;si++){
+    var sk=keys[si], se=SESS[sk], logged=hasLogs(w,sk);
+    sessHtml+='<div class="sesscard" style="border-left-color:'+se.color+';'+(logged?"border-color:"+se.color+"60":"")+'" onclick="selSess(\''+sk+'\')">';
+    sessHtml+='<div class="sessleft"><span class="sessicon">'+se.icon+'</span><div><div class="sessname">'+se.label+'</div><div class="sessday">'+se.day+'</div><div class="sesssch">'+se.scheme+'</div></div></div>';
+    sessHtml+='<div class="sessright">'+(logged?'<span class="logbadge">Logged</span>':'')+'<span style="color:var(--dim);font-size:20px">&#8250;</span></div></div>';
+  }
+  document.getElementById("sess-list").innerHTML=sessHtml;
+
+  var condHtml="";
+  var ckeys=["tue","thu"];
+  for(var ci=0;ci<ckeys.length;ci++){
+    var ck2=ckeys[ci], c=COND[ck2], cval=g(condKey(w,ck2));
+    condHtml+='<div class="condcard" style="border-left-color:'+c.color+'">';
+    condHtml+='<div class="condtop"><span style="font-size:22px">'+c.icon+'</span><div><div class="condname">'+c.label+' - '+c.day+'</div><div class="conddet">'+c.det(w)+'</div></div></div>';
+    condHtml+='<textarea class="ta-sm" data-condkey="cond-'+w+'-'+ck2+'-note" placeholder="Notes - duration, effort, terrain...">'+cval+'</textarea>';
+
+```
+condHtml+='</div>';
+```
+
+}
+document.getElementById(“cond-list”).innerHTML=condHtml;
+
+// Attach cond textarea listeners
+document.querySelectorAll(”[data-condkey]”).forEach(function(el){
+el.addEventListener(“input”,function(){ sv(this.getAttribute(“data-condkey”),this.value); });
+});
+
+var es=document.getElementById(“exit-stds”);
+if(w===8){
+var exits=[[“Heavy Day”,“All sets/reps with good form, consistent progression”],[“TUT Day”,“Holding 3010 tempo for all 12-15 reps”],[“Medium Day”,“Top of range (8 reps) challenging but controlled”],[“Ruck”,“35 lbs for 60 min on hilly terrain”],[“Run”,“40 min Zone 2 without effort”]];
+var ehtml=’<div style="margin-top:24px"><div class="sl">Phase 1 Exit Standards</div><div class="card">’;
+for(var ei=0;ei<exits.length;ei++) ehtml+=’<div class="exitrow"><div><div class="elabel">’+exits[ei][0]+’</div><div class="etarget">’+exits[ei][1]+’</div></div></div>’;
+ehtml+=’</div></div>’;
+es.innerHTML=ehtml;
+} else { es.innerHTML=””; }
+}
+
+function selWeek(w){ st.week=w; renderOverview(); }
+function selSess(sk){ st.sess=sk; showDay(); }
+
+// ── Render Day ────────────────────────────────────────────────────────
+
+function renderDay(){
+var w=st.week, sk=st.sess, se=SESS[sk], odd=w%2!==0, fin=FIN[sk][odd?“odd”:“even”];
+document.getElementById(“day-title”).textContent=se.icon+” “+se.label;
+document.getElementById(“day-sub”).textContent=se.day+” - Week “+w+” - “+WG[w].label;
+
+// Exercises
+var exHtml=””;
+for(var ei=0;ei<se.ex.length;ei++){
+var ex=se.ex[ei];
+exHtml+=’<div class="excard"><div class="exname">’+ex.n+(ex.tempo?’<span class="tbadge">3010</span>’:’’)+’</div>’;
+exHtml+=’<div class="exmeta">’+ex.s+’ sets x ‘+ex.r+’ - Rest ‘+ex.rest+(ex.main?” - Main lift”:””)+’</div>’;
+exHtml+=’<div class="setsrow">’;
+for(var si2=1;si2<=ex.s;si2++){
+var wval=g(lk(w,sk,ex.id,si2)), rval=g(rk(w,sk,ex.id,si2));
+exHtml+=’<div class="setcol"><span class="setlbl">S’+si2+’</span>’;
+exHtml+=’<span style="font-size:8px;color:var(--dim)">lbs</span>’;
+exHtml+=’<input class="si" type="number" inputmode="decimal" placeholder="--" value="'+wval+'" data-key="'+lk(w,sk,ex.id,si2)+'">’;
+exHtml+=’<span style="font-size:8px;color:var(--grn)">reps</span>’;
+exHtml+=’<input class="si reps" type="number" inputmode="numeric" placeholder="--" value="'+rval+'" data-key="'+rk(w,sk,ex.id,si2)+'"></div>’;
+}
+exHtml+=’</div></div>’;
+}
+document.getElementById(“ex-list”).innerHTML=exHtml;
+
+// Finisher
+var fval=g(finKey(w,sk));
+var fhtml=’<div class="fincard '+fin.t+'">’;
+fhtml+=’<div class="fintype">’+(fin.t===“cardio”?“Cardio”:“Strength-Endurance”)+’</div>’;
+fhtml+=’<div class="finname">’+fin.l+’</div>’;
+fhtml+=’<div class="finden">’+fin.d+’</div>’;
+fhtml+=’<textarea class="ta-sm" data-finkey="'+finKey(w,sk)+'" placeholder="Finisher notes - duration, effort, how it felt...">’+fval+’</textarea>’;
+fhtml+=’</div>’;
+document.getElementById(“fin-card”).innerHTML=fhtml;
+
+// Feel
+document.getElementById(“feel-card”).innerHTML=buildFeel(w,sk);
+
+// Accessories
+renderAcc();
+
+// Notes
+var sn=document.getElementById(“sess-notes”);
+sn.value=g(nk(w,sk));
+var cm=document.getElementById(“coach-msg”);
+cm.value=g(mk(w,sk));
+
+// Attach all data-key listeners
+attachListeners();
+}
+
+function attachListeners(){
+document.querySelectorAll(”[data-key]”).forEach(function(el){
+el.addEventListener(“input”,function(){ sv(this.getAttribute(“data-key”),this.value); });
+});
+document.querySelectorAll(”[data-finkey]”).forEach(function(el){
+el.addEventListener(“input”,function(){ sv(this.getAttribute(“data-finkey”),this.value); });
+});
+var sn=document.getElementById(“sess-notes”);
+if(sn) sn.addEventListener(“input”,function(){ sv(nk(st.week,st.sess),this.value); });
+var cm=document.getElementById(“coach-msg”);
+if(cm) cm.addEventListener(“input”,function(){ sv(mk(st.week,st.sess),this.value); });
+}
+
+// ── Feel ──────────────────────────────────────────────────────────────
+
+function buildFeel(w,sk){
+var html=’<div class="flsec">How Did It Feel?</div>’;
+
+// Rate rows
+var rfields=[[“Body Feel”,“bodyFeel”,”#c8a96e”],[“Recovery Going In”,“recovery”,”#7eb8a4”],[“Energy”,“energy”,”#a07ec8”]];
+for(var ri=0;ri<rfields.length;ri++){
+var label=rfields[ri][0], field=rfields[ri][1], col=rfields[ri][2];
+var cur=gN(ck(w,sk,field));
+html+=’<div class="fllbl">’+label+’</div><div class="chip-row">’;
+for(var v=1;v<=5;v++){
+var on=cur===v;
+html+=’<button class=“chip” style=”’+(on?“border-color:”+col+”;background:”+col+“22;color:”+col:””)+’” data-feel-field=”’+field+’” data-feel-val=”’+v+’”>’+FE[v]+” “+FL[v]+’</button>’;
+}
+html+=’</div>’;
+}
+
+// RPE
+var curRpe=gN(ck(w,sk,“rpe”));
+html+=’<div class="fllbl">Session RPE (1-10)</div><div class="chip-row">’;
+for(var v2=1;v2<=10;v2++){
+var onR=curRpe===v2;
+html+=’<button class=“chip” style=“min-width:30px;padding:6px 3px;text-align:center;font-size:11px;’+(onR?“border-color:”+RC[v2]+”;background:”+RC[v2]+“22;color:”+RC[v2]:””)+’” data-rpe-val=”’+v2+’”>’+v2+’</button>’;
+}
+html+=’</div>’;
+
+// Soreness
+var curSore=gA(ck(w,sk,“sore”));
+html+=’<div class="fllbl">Soreness (tap all that apply)</div><div class="chip-row">’;
+for(var si3=0;si3<SA.length;si3++){
+var on2=curSore.indexOf(SA[si3])>=0;
+html+=’<button class=“chip” style=“font-size:11px;padding:6px 10px;’+(on2?“border-color:#c87e7e;background:#c87e7e22;color:#c87e7e”:””)+’” data-sore=”’+SA[si3]+’”>’+SA[si3]+’</button>’;
+}
+html+=’</div>’;
+
+// Stalling
+var curStall=gA(ck(w,sk,“stall”));
+html+=’<div class="fllbl">Any Lifts Stalling?</div><div class="chip-row">’;
+for(var oi=0;oi<SO.length;oi++){
+var on3=curStall.indexOf(SO[oi])>=0;
+html+=’<button class=“chip” style=“font-size:11px;padding:6px 10px;’+(on3?“border-color:#c8a030;background:#c8a03022;color:#c8a030”:””)+’” data-stall=”’+SO[oi]+’”>’+SO[oi]+’</button>’;
+}
+var ag=curStall.indexOf(“None”)>=0;
+html+=’<button class=“chip” style=“font-size:11px;padding:6px 10px;’+(ag?“border-color:#7eb8a4;background:#7eb8a422;color:#7eb8a4”:””)+’” data-stall-all=“1”>All Good</button>’;
+html+=’</div>’;
+
+return html;
+}
+
+function attachFeelListeners(){
+var w=st.week, sk=st.sess;
+document.querySelectorAll(”[data-feel-field]”).forEach(function(el){
+el.addEventListener(“click”,function(){
+sv(ck(w,sk,this.getAttribute(“data-feel-field”)),parseInt(this.getAttribute(“data-feel-val”)));
+document.getElementById(“feel-card”).innerHTML=buildFeel(w,sk);
+attachFeelListeners();
+});
+});
+document.querySelectorAll(”[data-rpe-val]”).forEach(function(el){
+el.addEventListener(“click”,function(){
+sv(ck(w,sk,“rpe”),parseInt(this.getAttribute(“data-rpe-val”)));
+document.getElementById(“feel-card”).innerHTML=buildFeel(w,sk);
+attachFeelListeners();
+});
+});
+document.querySelectorAll(”[data-sore]”).forEach(function(el){
+el.addEventListener(“click”,function(){
+tog(ck(w,sk,“sore”),this.getAttribute(“data-sore”));
+document.getElementById(“feel-card”).innerHTML=buildFeel(w,sk);
+attachFeelListeners();
+});
+});
+document.querySelectorAll(”[data-stall]”).forEach(function(el){
+el.addEventListener(“click”,function(){
+tog(ck(w,sk,“stall”),this.getAttribute(“data-stall”));
+document.getElementById(“feel-card”).innerHTML=buildFeel(w,sk);
+attachFeelListeners();
+});
+});
+document.querySelectorAll(”[data-stall-all]”).forEach(function(el){
+el.addEventListener(“click”,function(){
+sv(ck(w,sk,“stall”),“None”);
+document.getElementById(“feel-card”).innerHTML=buildFeel(w,sk);
+attachFeelListeners();
+});
+});
+}
+
+// Override buildFeel caller
+var _origRenderDay=null;
+document.addEventListener(“DOMContentLoaded”,function(){});
+
+// Patch feel card rendering
+function renderFeel(){
+var w=st.week, sk=st.sess;
+document.getElementById(“feel-card”).innerHTML=buildFeel(w,sk);
+attachFeelListeners();
+}
+
+// ── Accessory Work ────────────────────────────────────────────────────
+
+function renderAcc(){
+var w=st.week, sk=st.sess;
+var count=getAccCount(w,sk);
+var html=””;
+for(var i=0;i<count;i++){
+var vn=g(ak(w,sk,i,“name”)), vs=g(ak(w,sk,i,“sets”)), vr=g(ak(w,sk,i,“reps”)), vw=g(ak(w,sk,i,“weight”)), vo=g(ak(w,sk,i,“note”));
+html+=’<div class="excard" style="margin-bottom:8px">’;
+html+=’<div class="accrow">’;
+html+=’<input class=“accinput” type=“text” placeholder=“Exercise e.g. Barbell Curl” value=”’+vn+’” data-acckey=”’+ak(w,sk,i,“name”)+’”>’;
+html+=’<button onclick="removeAcc('+i+')" style="background:none;border:1px solid var(--red);border-radius:6px;color:var(--red);padding:6px 10px;cursor:pointer;font-size:11px;flex-shrink:0">X</button>’;
+html+=’</div>’;
+html+=’<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">’;
+html+=’<div class="setcol"><span class="setlbl">Sets</span><input class=“accnum” type=“number” inputmode=“numeric” placeholder=“3” value=”’+vs+’” data-acckey=”’+ak(w,sk,i,“sets”)+’”></div>’;
+html+=’<div class="setcol"><span class="setlbl" style="color:var(--grn)">Reps</span><input class=“accnum” type=“number” inputmode=“numeric” placeholder=“12” value=”’+vr+’” data-acckey=”’+ak(w,sk,i,“reps”)+’” style=“color:var(–grn);border-color:#3a5a4a”></div>’;
+html+=’<div class="setcol"><span class="setlbl">lbs</span><input class=“accnum” type=“number” inputmode=“decimal” placeholder=”–” value=”’+vw+’” data-acckey=”’+ak(w,sk,i,“weight”)+’”></div>’;
+html+=’<div style="flex:1;min-width:80px"><span class="setlbl">Notes</span><input class=“accnote” type=“text” placeholder=“optional” value=”’+vo+’” data-acckey=”’+ak(w,sk,i,“note”)+’”></div>’;
+html+=’</div></div>’;
+}
+document.getElementById(“acc-list”).innerHTML=html;
+
+// Attach listeners via data-acckey
+document.querySelectorAll(”[data-acckey]”).forEach(function(el){
+el.addEventListener(“input”,function(){ sv(this.getAttribute(“data-acckey”),this.value); });
+});
+}
+
+function addAcc(){
+var w=st.week, sk=st.sess;
+var count=getAccCount(w,sk);
+db[accCountKey(w,sk)]=String(count+1);
+saveDB();
+renderAcc();
+}
+
+function removeAcc(idx){
+var w=st.week, sk=st.sess;
+var count=getAccCount(w,sk);
+var fields=[“name”,“sets”,“reps”,“weight”,“note”];
+for(var i=idx;i<count-1;i++){
+for(var fi=0;fi<fields.length;fi++){
+var next=db[ak(w,sk,i+1,fields[fi])];
+if(next!==undefined){ db[ak(w,sk,i,fields[fi])]=next; }
+else { delete db[ak(w,sk,i,fields[fi])]; }
+}
+}
+for(var fi2=0;fi2<fields.length;fi2++) delete db[ak(w,sk,count-1,fields[fi2])];
+db[accCountKey(w,sk)]=String(count-1);
+saveDB();
+renderAcc();
+}
+
+// ── Share ─────────────────────────────────────────────────────────────
+
+function renderShare(){
+var w=st.week, sk=st.sess, se=SESS[sk];
+document.getElementById(“share-sub”).textContent=“Week “+w+” - “+se.label+” - Copy to chat”;
+document.getElementById(“rbox”).textContent=buildReport(w,sk);
+}
+
+function buildReport(w,sk){
+var se=SESS[sk];
+var fin=FIN[sk][w%2!==0?“odd”:“even”];
+var fl=function(f){ var v=gN(ck(w,sk,f)); return v?FE[v]+” “+FL[v]+” (”+v+”/5)”:“not rated”; };
+var D=”=”.repeat(42);
+var lines=[D,“ELK READY - COACH REPORT”,D,
+“WEEK    : “+w+” of 8  (”+WG[w].label.toUpperCase()+”)”,
+“SESSION : “+se.icon+” “+se.label,
+“DAY     : “+se.day,
+“SCHEME  : “+se.scheme,
+“”,“WEIGHTS & REPS”,”-”.repeat(42)];
+
+for(var ei=0;ei<se.ex.length;ei++){
+var ex=se.ex[ei];
+var sets=””;
+for(var si4=1;si4<=ex.s;si4++){
+var lb=db[lk(w,sk,ex.id,si4)]||”–”;
+var rp=db[rk(w,sk,ex.id,si4)]||”–”;
+sets+=”  S”+si4+”=”+lb+“lb x “+rp+“r”;
+}
+lines.push((ex.n+(ex.tempo?” [3010]”:””)+(ex.main?” *”:””)).padEnd(26)+sets.trim());
+}
+
+var fval=db[finKey(w,sk)];
+lines.push(””,“FINISHER : “+fin.l,”         “+fin.d);
+if(fval&&fval.trim()) lines.push(”         Note: “+fval.trim());
+
+lines.push(””,“FEEL”,”-”.repeat(42));
+lines.push(“Body Feel  : “+fl(“bodyFeel”));
+lines.push(“Recovery   : “+fl(“recovery”));
+lines.push(“Energy     : “+fl(“energy”));
+var rpe=gN(ck(w,sk,“rpe”));
+lines.push(“RPE        : “+(rpe?rpe+”/10”:“not rated”));
+var sore=gA(ck(w,sk,“sore”));
+lines.push(“Soreness   : “+(sore.length?sore.join(”, “):“none”));
+var stall=gA(ck(w,sk,“stall”));
+lines.push(“Stalling   : “+(stall.length?stall.join(”, “):“none”));
+
+// Accessories
+var accCount=getAccCount(w,sk);
+if(accCount>0){
+lines.push(””,“ACCESSORY WORK”,”-”.repeat(42));
+for(var ai=0;ai<accCount;ai++){
+var nm=g(ak(w,sk,ai,“name”)), as=g(ak(w,sk,ai,“sets”)), ar=g(ak(w,sk,ai,“reps”)), aw=g(ak(w,sk,ai,“weight”)), ao=g(ak(w,sk,ai,“note”));
+if(nm.trim()) lines.push(”  “+nm+” - “+as+“x”+ar+(aw?” @ “+aw+“lbs”:””)+(ao?” (”+ao+”)”:””));
+}
+}
+
+// Conditioning notes
+var condLines=[];
+var ckeys2=[“tue”,“thu”];
+for(var ci2=0;ci2<ckeys2.length;ci2++){
+var cn=db[condKey(w,ckeys2[ci2])];
+if(cn&&cn.trim()) condLines.push(COND[ckeys2[ci2]].icon+” “+COND[ckeys2[ci2]].label+”: “+cn.trim());
+}
+if(condLines.length){ lines.push(””,“CONDITIONING NOTES”,”-”.repeat(42)); for(var cl=0;cl<condLines.length;cl++) lines.push(condLines[cl]); }
+
+var note=db[nk(w,sk)];
+if(note&&note.trim()){ lines.push(””,“NOTES”,”-”.repeat(42),note.trim()); }
+var msg=db[mk(w,sk)];
+if(msg&&msg.trim()){ lines.push(””,“FOR COACH”,”-”.repeat(42),msg.trim()); }
+lines.push(””,D);
+return lines.join(”\n”);
+}
+
+function copyRpt(){
+var txt=document.getElementById(“rbox”).textContent;
+navigator.clipboard.writeText(txt).then(function(){ toast(“Copied - paste to coach!”); }).catch(function(){ toast(“Select text above and copy manually”); });
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────
+
+function renderDay(){
+var w=st.week, sk=st.sess, se=SESS[sk], odd=w%2!==0, fin=FIN[sk][odd?“odd”:“even”];
+document.getElementById(“day-title”).textContent=se.icon+” “+se.label;
+document.getElementById(“day-sub”).textContent=se.day+” - Week “+w+” - “+WG[w].label;
+
+var exHtml=””;
+for(var ei=0;ei<se.ex.length;ei++){
+var ex=se.ex[ei];
+exHtml+=’<div class="excard"><div class="exname">’+ex.n+(ex.tempo?’<span class="tbadge">3010</span>’:’’)+’</div>’;
+exHtml+=’<div class="exmeta">’+ex.s+’ sets x ‘+ex.r+’ - Rest ‘+ex.rest+(ex.main?” - Main lift”:””)+’</div>’;
+exHtml+=’<div class="setsrow">’;
+for(var si5=1;si5<=ex.s;si5++){
+var wval=g(lk(w,sk,ex.id,si5)), rval=g(rk(w,sk,ex.id,si5));
+exHtml+=’<div class="setcol"><span class="setlbl">S’+si5+’</span>’;
+exHtml+=’<span style="font-size:8px;color:var(--dim)">lbs</span>’;
+exHtml+=’<input class="si" type="number" inputmode="decimal" placeholder="--" value="'+wval+'" data-key="'+lk(w,sk,ex.id,si5)+'">’;
+exHtml+=’<span style="font-size:8px;color:var(--grn)">reps</span>’;
+exHtml+=’<input class="si reps" type="number" inputmode="numeric" placeholder="--" value="'+rval+'" data-key="'+rk(w,sk,ex.id,si5)+'"></div>’;
+}
+exHtml+=’</div></div>’;
+}
+document.getElementById(“ex-list”).innerHTML=exHtml;
+
+var fval=g(finKey(w,sk));
+document.getElementById(“fin-card”).innerHTML=
+‘<div class="fincard '+fin.t+'">’+
+‘<div class="fintype">’+(fin.t===“cardio”?“Cardio”:“Strength-Endurance”)+’</div>’+
+‘<div class="finname">’+fin.l+’</div>’+
+‘<div class="finden">’+fin.d+’</div>’+
+‘<textarea class="ta-sm" data-finkey="'+finKey(w,sk)+'" placeholder="Finisher notes - duration, effort, how it felt...">’+fval+’</textarea>’+
+‘</div>’;
+
+document.getElementById(“feel-card”).innerHTML=buildFeel(w,sk);
+attachFeelListeners();
+
+renderAcc();
+
+document.getElementById(“sess-notes”).value=g(nk(w,sk));
+document.getElementById(“coach-msg”).value=g(mk(w,sk));
+
+document.querySelectorAll(”[data-key]”).forEach(function(el){
+el.addEventListener(“input”,function(){ sv(this.getAttribute(“data-key”),this.value); });
+});
+document.querySelectorAll(”[data-finkey]”).forEach(function(el){
+el.addEventListener(“input”,function(){ sv(this.getAttribute(“data-finkey”),this.value); });
+});
+document.getElementById(“sess-notes”).addEventListener(“input”,function(){ sv(nk(st.week,st.sess),this.value); });
+document.getElementById(“coach-msg”).addEventListener(“input”,function(){ sv(mk(st.week,st.sess),this.value); });
+}
+
+// Service worker
+if(“serviceWorker” in navigator){
+var swCode=‘const C=“elk-v4”;self.addEventListener(“install”,e=>{e.waitUntil(caches.open(C).then(c=>c.addAll([”./”])));self.skipWaiting();});self.addEventListener(“activate”,e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));self.clients.claim();});self.addEventListener(“fetch”,e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match(”./”))));});’;
+var swBlob=new Blob([swCode],{type:“application/javascript”});
+navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(function(){});
+}
+
+loadDB();
+renderOverview();
+</script>
+
+</body>
+</html>
