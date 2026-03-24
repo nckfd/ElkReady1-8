@@ -496,51 +496,51 @@ function renderOverview() {
       '<textarea class="sm" data-cond="' + c.id + '" placeholder="Notes - duration, effort, terrain...">' + escHtml(cval) + '</textarea>' +
       '</div>';
 }
-document.getElementById(“cond-list”).innerHTML = condHtml;
+document.getElementById("cond-list").innerHTML = condHtml;
 
 // Exit standards week 8
-var esEl = document.getElementById(“exit-standards”);
+var esEl = document.getElementById("exit-standards");
 if (w === 8) {
 var exits = [
-[“Heavy Day”, “All sets/reps with good form, consistent progression”],
-[“TUT Day”,   “Holding 3010 tempo for all 12-15 reps”],
-[“Medium Day”,“Top of rep range (8) challenging but controlled”],
-[“Ruck”,      “35 lbs for 60 min on hilly terrain”],
-[“Run”,       “40 min Zone 2 without effort”]
+["Heavy Day", "All sets/reps with good form, consistent progression"],
+["TUT Day",   "Holding 3010 tempo for all 12-15 reps"],
+["Medium Day","Top of rep range (8) challenging but controlled"],
+["Ruck",      "35 lbs for 60 min on hilly terrain"],
+["Run",       "40 min Zone 2 without effort"]
 ];
-var eHtml = ‘<div style="margin-top:16px"><div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#5a7a5a;margin-bottom:8px">PHASE 1 EXIT STANDARDS</div><div class="card">’;
+var eHtml = '<div style="margin-top:16px"><div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#5a7a5a;margin-bottom:8px">PHASE 1 EXIT STANDARDS</div><div class="card">';
 for (var ei = 0; ei < exits.length; ei++) {
-eHtml += ‘<div style="margin-bottom:8px"><div style="font-size:12px;color:#c8a96e;font-weight:bold">’ + exits[ei][0] + ‘</div>’ +
-‘<div style="font-size:11px;color:#5a7a5a;margin-top:2px">’ + exits[ei][1] + ‘</div></div>’;
+eHtml += '<div style="margin-bottom:8px"><div style="font-size:12px;color:#c8a96e;font-weight:bold">' + exits[ei][0] + '</div>' +
+'<div style="font-size:11px;color:#5a7a5a;margin-top:2px">' + exits[ei][1] + '</div></div>';
 }
-esEl.innerHTML = eHtml + ‘</div></div>’;
+esEl.innerHTML = eHtml + '</div></div>';
 } else {
-esEl.innerHTML = “”;
+esEl.innerHTML = "";
 }
 
 // Bind week tabs
-var tabs = document.querySelectorAll(”[data-week]”);
+var tabs = document.querySelectorAll("[data-week]");
 for (var ti = 0; ti < tabs.length; ti++) {
-tabs[ti].addEventListener(“click”, function() {
-appState.week = parseInt(this.getAttribute(“data-week”));
+tabs[ti].addEventListener("click", function() {
+appState.week = parseInt(this.getAttribute("data-week"));
 renderOverview();
 });
 }
 
 // Bind session cards
-var cards = document.querySelectorAll(”[data-sess]”);
+var cards = document.querySelectorAll("[data-sess]");
 for (var sci = 0; sci < cards.length; sci++) {
-cards[sci].addEventListener(“click”, function() {
-appState.sess = this.getAttribute(“data-sess”);
+cards[sci].addEventListener("click", function() {
+appState.sess = this.getAttribute("data-sess");
 goDay();
 });
 }
 
 // Bind conditioning notes
-var condInputs = document.querySelectorAll(”[data-cond]”);
+var condInputs = document.querySelectorAll("[data-cond]");
 for (var cii = 0; cii < condInputs.length; cii++) {
-condInputs[cii].addEventListener(“input”, function() {
-dbSet(condKey(appState.week, this.getAttribute(“data-cond”)), this.value);
+condInputs[cii].addEventListener("input", function() {
+dbSet(condKey(appState.week, this.getAttribute("data-cond")), this.value);
 });
 }
 }
@@ -556,41 +556,41 @@ var se = SESSIONS[sk];
 var odd = (w % 2 !== 0);
 var fin = odd ? FINISHERS[sk].odd : FINISHERS[sk].even;
 
-document.getElementById(“day-title”).textContent = se.label;
-document.getElementById(“day-sub”).textContent = se.day + “ - Week “ + w + “ - “ + WG[w].label;
+document.getElementById("day-title").textContent = se.label;
+document.getElementById("day-sub").textContent = se.day + " - Week " + w + " - " + WG[w].label;
 
 // Exercises
-var exHtml = “”;
+var exHtml = "";
 for (var ei = 0; ei < se.exercises.length; ei++) {
 var ex = se.exercises[ei];
-exHtml += ‘<div class="ex-card">’ +
-‘<div class="ex-name">’ + ex.name + (ex.tempo ? ‘<span class="tempo-badge">3010</span>’ : ‘’) + ‘</div>’ +
-‘<div class="ex-meta">’ + ex.sets + ’ sets x ’ + ex.reps + ’ - Rest ’ + ex.rest + (ex.main ? ’ - Main lift’ : ‘’) + ‘</div>’ +
-‘<div class="sets-row">’;
+exHtml += '<div class="ex-card">' +
+'<div class="ex-name">' + ex.name + (ex.tempo ? '<span class="tempo-badge">3010</span>' : '') + '</div>' +
+'<div class="ex-meta">' + ex.sets + ' sets x ' + ex.reps + ' - Rest ' + ex.rest + (ex.main ? ' - Main lift' : '') + '</div>' +
+'<div class="sets-row">';
 for (var s = 1; s <= ex.sets; s++) {
 var lbVal = dbGet(wk(w, sk, ex.id, s));
 var rpVal = dbGet(rk(w, sk, ex.id, s));
-exHtml += ‘<div class="set-col">’ +
-‘<span class="set-label">S’ + s + ‘</span>’ +
-‘<span class="set-sub">lbs</span>’ +
-‘<input class="num" type="number" inputmode="decimal" placeholder="--" value="' + escHtml(lbVal) + '" data-wk="' + wk(w,sk,ex.id,s) + '">’ +
-‘<span class="set-sub" style="color:#7eb8a4">reps</span>’ +
-‘<input class="num reps" type="number" inputmode="numeric" placeholder="--" value="' + escHtml(rpVal) + '" data-rk="' + rk(w,sk,ex.id,s) + '">’ +
-‘</div>’;
+exHtml += '<div class="set-col">' +
+'<span class="set-label">S' + s + '</span>' +
+'<span class="set-sub">lbs</span>' +
+'<input class="num" type="number" inputmode="decimal" placeholder="--" value="' + escHtml(lbVal) + '" data-wk="' + wk(w,sk,ex.id,s) + '">' +
+'<span class="set-sub" style="color:#7eb8a4">reps</span>' +
+'<input class="num reps" type="number" inputmode="numeric" placeholder="--" value="' + escHtml(rpVal) + '" data-rk="' + rk(w,sk,ex.id,s) + '">' +
+'</div>';
 }
-exHtml += ‘</div></div>’;
+exHtml += '</div></div>';
 }
-document.getElementById(“ex-list”).innerHTML = exHtml;
+document.getElementById("ex-list").innerHTML = exHtml;
 
 // Finisher
 var finNote = dbGet(finNoteKey(w, sk));
-document.getElementById(“fin-card”).innerHTML =
-‘<div class="fin-card ' + fin.t + '">’ +
-‘<div class="fin-type">’ + (fin.t === “cardio” ? “Cardio” : “Strength-Endurance”) + ‘</div>’ +
-‘<div class="fin-name">’ + fin.l + ‘</div>’ +
-‘<div class="fin-det">’ + fin.d + ‘</div>’ +
-‘<textarea class="sm" id="fin-note-input" placeholder="Finisher notes - duration, effort, how it felt...">’ + escHtml(finNote) + ‘</textarea>’ +
-‘</div>’;
+document.getElementById("fin-card").innerHTML =
+'<div class="fin-card ' + fin.t + '">' +
+'<div class="fin-type">' + (fin.t === "cardio" ? "Cardio" : "Strength-Endurance") + '</div>' +
+'<div class="fin-name">' + fin.l + '</div>' +
+'<div class="fin-det">' + fin.d + '</div>' +
+'<textarea class="sm" id="fin-note-input" placeholder="Finisher notes - duration, effort, how it felt...">' + escHtml(finNote) + '</textarea>' +
+'</div>';
 
 // Feel
 renderFeel();
@@ -599,29 +599,29 @@ renderFeel();
 renderAccessories();
 
 // Notes
-document.getElementById(“sess-notes”).value = dbGet(noteKey(w, sk));
-document.getElementById(“coach-msg”).value = dbGet(msgKey(w, sk));
+document.getElementById("sess-notes").value = dbGet(noteKey(w, sk));
+document.getElementById("coach-msg").value = dbGet(msgKey(w, sk));
 
 // Bind weight/rep inputs
-var wkInputs = document.querySelectorAll(”[data-wk]”);
+var wkInputs = document.querySelectorAll("[data-wk]");
 for (var wi = 0; wi < wkInputs.length; wi++) {
-wkInputs[wi].addEventListener(“input”, function() { dbSet(this.getAttribute(“data-wk”), this.value); });
+wkInputs[wi].addEventListener("input", function() { dbSet(this.getAttribute("data-wk"), this.value); });
 }
-var rkInputs = document.querySelectorAll(”[data-rk]”);
+var rkInputs = document.querySelectorAll("[data-rk]");
 for (var ri = 0; ri < rkInputs.length; ri++) {
-rkInputs[ri].addEventListener(“input”, function() { dbSet(this.getAttribute(“data-rk”), this.value); });
+rkInputs[ri].addEventListener("input", function() { dbSet(this.getAttribute("data-rk"), this.value); });
 }
 
 // Finisher note
-document.getElementById(“fin-note-input”).addEventListener(“input”, function() {
+document.getElementById("fin-note-input").addEventListener("input", function() {
 dbSet(finNoteKey(appState.week, appState.sess), this.value);
 });
 
 // Session notes
-document.getElementById(“sess-notes”).addEventListener(“input”, function() {
+document.getElementById("sess-notes").addEventListener("input", function() {
 dbSet(noteKey(appState.week, appState.sess), this.value);
 });
-document.getElementById(“coach-msg”).addEventListener(“input”, function() {
+document.getElementById("coach-msg").addEventListener("input", function() {
 dbSet(msgKey(appState.week, appState.sess), this.value);
 });
 }
@@ -633,95 +633,95 @@ dbSet(msgKey(appState.week, appState.sess), this.value);
 function renderFeel() {
 var w = appState.week;
 var sk = appState.sess;
-var html = ‘<div class="section-title">How Did It Feel?</div>’;
+var html = '<div class="section-title">How Did It Feel?</div>';
 
 // Rate rows
 var rows = [
-{label:“Body Feel”,         field:“bodyFeel”, color:”#c8a96e”},
-{label:“Recovery Going In”, field:“recovery”,  color:”#7eb8a4”},
-{label:“Energy”,            field:“energy”,    color:”#a07ec8”}
+{label:"Body Feel",         field:"bodyFeel", color:"#c8a96e"},
+{label:"Recovery Going In", field:"recovery",  color:"#7eb8a4"},
+{label:"Energy",            field:"energy",    color:"#a07ec8"}
 ];
 for (var ri = 0; ri < rows.length; ri++) {
 var row = rows[ri];
 var cur = dbGetNum(feelKey(w, sk, row.field));
-html += ‘<div class="field-label">’ + row.label + ‘</div><div class="chip-row">’;
+html += '<div class="field-label">' + row.label + '</div><div class="chip-row">';
 for (var v = 1; v <= 5; v++) {
 var on = (cur === v);
-html += ‘<button class="chip" data-feel-field="' + row.field + '" data-feel-val="' + v + '" style="' +
-(on ? 'border-color:' + row.color + ';background:' + row.color + '22;color:' + row.color : '') + '">’ +
-FEEL_LABELS[v] + ‘</button>’;
+html += '<button class="chip" data-feel-field="' + row.field + '" data-feel-val="' + v + '" style="' +
+(on ? 'border-color:' + row.color + ';background:' + row.color + '22;color:' + row.color : '') + '">' +
+FEEL_LABELS[v] + '</button>';
 }
-html += ‘</div>’;
+html += '</div>';
 }
 
 // RPE
-var curRpe = dbGetNum(feelKey(w, sk, “rpe”));
-html += ‘<div class="field-label">Session RPE (1-10)</div><div class="chip-row">’;
+var curRpe = dbGetNum(feelKey(w, sk, "rpe"));
+html += '<div class="field-label">Session RPE (1-10)</div><div class="chip-row">';
 for (var v2 = 1; v2 <= 10; v2++) {
 var onR = (curRpe === v2);
-html += ‘<button class="chip" data-rpe="' + v2 + '" style="min-width:28px;padding:5px 3px;text-align:center;font-size:11px;' +
-(onR ? 'border-color:' + RPE_COLORS[v2] + ';background:' + RPE_COLORS[v2] + '22;color:' + RPE_COLORS[v2] : '') + '">’ + v2 + ‘</button>’;
+html += '<button class="chip" data-rpe="' + v2 + '" style="min-width:28px;padding:5px 3px;text-align:center;font-size:11px;' +
+(onR ? 'border-color:' + RPE_COLORS[v2] + ';background:' + RPE_COLORS[v2] + '22;color:' + RPE_COLORS[v2] : '') + '">' + v2 + '</button>';
 }
-html += ‘</div>’;
+html += '</div>';
 
 // Soreness
-var curSore = dbGetArr(feelKey(w, sk, “sore”));
-html += ‘<div class="field-label">Soreness (tap all that apply)</div><div class="chip-row">’;
+var curSore = dbGetArr(feelKey(w, sk, "sore"));
+html += '<div class="field-label">Soreness (tap all that apply)</div><div class="chip-row">';
 for (var si = 0; si < SORE_AREAS.length; si++) {
 var onS = (curSore.indexOf(SORE_AREAS[si]) >= 0);
-html += ‘<button class="chip" data-sore="' + SORE_AREAS[si] + '" style="font-size:11px;padding:5px 9px;' +
-(onS ? 'border-color:#c87e7e;background:#c87e7e22;color:#c87e7e' : '') + '">’ + SORE_AREAS[si] + ‘</button>’;
+html += '<button class="chip" data-sore="' + SORE_AREAS[si] + '" style="font-size:11px;padding:5px 9px;' +
+(onS ? 'border-color:#c87e7e;background:#c87e7e22;color:#c87e7e' : '') + '">' + SORE_AREAS[si] + '</button>';
 }
-html += ‘</div>’;
+html += '</div>';
 
 // Stalling
-var curStall = dbGetArr(feelKey(w, sk, “stall”));
-html += ‘<div class="field-label">Any Lifts Stalling?</div><div class="chip-row">’;
+var curStall = dbGetArr(feelKey(w, sk, "stall"));
+html += '<div class="field-label">Any Lifts Stalling?</div><div class="chip-row">';
 for (var oi = 0; oi < STALL_OPT.length; oi++) {
 var onO = (curStall.indexOf(STALL_OPT[oi]) >= 0);
-html += ‘<button class="chip" data-stall="' + STALL_OPT[oi] + '" style="font-size:11px;padding:5px 9px;' +
-(onO ? 'border-color:#c8a030;background:#c8a03022;color:#c8a030' : '') + '">’ + STALL_OPT[oi] + ‘</button>’;
+html += '<button class="chip" data-stall="' + STALL_OPT[oi] + '" style="font-size:11px;padding:5px 9px;' +
+(onO ? 'border-color:#c8a030;background:#c8a03022;color:#c8a030' : '') + '">' + STALL_OPT[oi] + '</button>';
 }
-var allGood = (curStall.indexOf(“None”) >= 0);
-html += ‘<button class="chip" data-stall-all="1" style="font-size:11px;padding:5px 9px;' +
-(allGood ? 'border-color:#7eb8a4;background:#7eb8a422;color:#7eb8a4' : '') + '">All Good</button>’;
-html += ‘</div>’;
+var allGood = (curStall.indexOf("None") >= 0);
+html += '<button class="chip" data-stall-all="1" style="font-size:11px;padding:5px 9px;' +
+(allGood ? 'border-color:#7eb8a4;background:#7eb8a422;color:#7eb8a4' : '') + '">All Good</button>';
+html += '</div>';
 
-document.getElementById(“feel-card”).innerHTML = html;
+document.getElementById("feel-card").innerHTML = html;
 
 // Bind feel chips
-var feelBtns = document.querySelectorAll(”[data-feel-field]”);
+var feelBtns = document.querySelectorAll("[data-feel-field]");
 for (var fi = 0; fi < feelBtns.length; fi++) {
-feelBtns[fi].addEventListener(“click”, function() {
-dbSet(feelKey(appState.week, appState.sess, this.getAttribute(“data-feel-field”)), parseInt(this.getAttribute(“data-feel-val”)));
+feelBtns[fi].addEventListener("click", function() {
+dbSet(feelKey(appState.week, appState.sess, this.getAttribute("data-feel-field")), parseInt(this.getAttribute("data-feel-val")));
 renderFeel();
 });
 }
-var rpeBtns = document.querySelectorAll(”[data-rpe]”);
+var rpeBtns = document.querySelectorAll("[data-rpe]");
 for (var rpi = 0; rpi < rpeBtns.length; rpi++) {
-rpeBtns[rpi].addEventListener(“click”, function() {
-dbSet(feelKey(appState.week, appState.sess, “rpe”), parseInt(this.getAttribute(“data-rpe”)));
+rpeBtns[rpi].addEventListener("click", function() {
+dbSet(feelKey(appState.week, appState.sess, "rpe"), parseInt(this.getAttribute("data-rpe")));
 renderFeel();
 });
 }
-var soreBtns = document.querySelectorAll(”[data-sore]”);
+var soreBtns = document.querySelectorAll("[data-sore]");
 for (var sbi = 0; sbi < soreBtns.length; sbi++) {
-soreBtns[sbi].addEventListener(“click”, function() {
-dbToggle(feelKey(appState.week, appState.sess, “sore”), this.getAttribute(“data-sore”));
+soreBtns[sbi].addEventListener("click", function() {
+dbToggle(feelKey(appState.week, appState.sess, "sore"), this.getAttribute("data-sore"));
 renderFeel();
 });
 }
-var stallBtns = document.querySelectorAll(”[data-stall]”);
+var stallBtns = document.querySelectorAll("[data-stall]");
 for (var stbi = 0; stbi < stallBtns.length; stbi++) {
-stallBtns[stbi].addEventListener(“click”, function() {
-dbToggle(feelKey(appState.week, appState.sess, “stall”), this.getAttribute(“data-stall”));
+stallBtns[stbi].addEventListener("click", function() {
+dbToggle(feelKey(appState.week, appState.sess, "stall"), this.getAttribute("data-stall"));
 renderFeel();
 });
 }
-var allGoodBtns = document.querySelectorAll(”[data-stall-all]”);
+var allGoodBtns = document.querySelectorAll("[data-stall-all]");
 for (var agi = 0; agi < allGoodBtns.length; agi++) {
-allGoodBtns[agi].addEventListener(“click”, function() {
-dbSet(feelKey(appState.week, appState.sess, “stall”), “None”);
+allGoodBtns[agi].addEventListener("click", function() {
+dbSet(feelKey(appState.week, appState.sess, "stall"), "None");
 renderFeel();
 });
 }
@@ -735,35 +735,35 @@ function renderAccessories() {
 var w = appState.week;
 var sk = appState.sess;
 var cnt = getAccCount(w, sk);
-var html = “”;
+var html = "";
 for (var i = 0; i < cnt; i++) {
-var nm  = dbGet(accKey(w, sk, i, “name”));
-var sets = dbGet(accKey(w, sk, i, “sets”));
-var reps = dbGet(accKey(w, sk, i, “reps”));
-var lbs  = dbGet(accKey(w, sk, i, “lbs”));
-var note = dbGet(accKey(w, sk, i, “note”));
-html += ‘<div class="acc-card">’ +
-‘<div class="acc-top">’ +
-‘<input class=“acc-name” type=“text” placeholder=“Exercise e.g. Barbell Curl” value=”’ + escHtml(nm) + ‘” data-acc-k=”’ + accKey(w,sk,i,“name”) + ‘”>’ +
-‘<button class="btn-del" data-del-idx="' + i + '">X</button>’ +
-‘</div>’ +
-‘<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end">’ +
-‘<div class="set-col"><span class="set-label">Sets</span><input class=“num” type=“number” inputmode=“numeric” placeholder=“3” value=”’ + escHtml(sets) + ‘” data-acc-k=”’ + accKey(w,sk,i,“sets”) + ‘”></div>’ +
-‘<div class="set-col"><span class="set-label" style="color:#7eb8a4">Reps</span><input class=“num reps” type=“number” inputmode=“numeric” placeholder=“10” value=”’ + escHtml(reps) + ‘” data-acc-k=”’ + accKey(w,sk,i,“reps”) + ‘”></div>’ +
-‘<div class="set-col"><span class="set-label">lbs</span><input class=“num” type=“number” inputmode=“decimal” placeholder=”–” value=”’ + escHtml(lbs) + ‘” data-acc-k=”’ + accKey(w,sk,i,“lbs”) + ‘”></div>’ +
-‘<div style="flex:1;min-width:80px"><span class="set-label">Notes</span><input class=“acc-note” type=“text” placeholder=“optional” value=”’ + escHtml(note) + ‘” data-acc-k=”’ + accKey(w,sk,i,“note”) + ‘”></div>’ +
-‘</div></div>’;
+var nm  = dbGet(accKey(w, sk, i, "name"));
+var sets = dbGet(accKey(w, sk, i, "sets"));
+var reps = dbGet(accKey(w, sk, i, "reps"));
+var lbs  = dbGet(accKey(w, sk, i, "lbs"));
+var note = dbGet(accKey(w, sk, i, "note"));
+html += '<div class="acc-card">' +
+'<div class="acc-top">' +
+'<input class="acc-name" type="text" placeholder="Exercise e.g. Barbell Curl" value="' + escHtml(nm) + '" data-acc-k="' + accKey(w,sk,i,"name") + '">' +
+'<button class="btn-del" data-del-idx="' + i + '">X</button>' +
+'</div>' +
+'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end">' +
+'<div class="set-col"><span class="set-label">Sets</span><input class="num" type="number" inputmode="numeric" placeholder="3" value="' + escHtml(sets) + '" data-acc-k="' + accKey(w,sk,i,"sets") + '"></div>' +
+'<div class="set-col"><span class="set-label" style="color:#7eb8a4">Reps</span><input class="num reps" type="number" inputmode="numeric" placeholder="10" value="' + escHtml(reps) + '" data-acc-k="' + accKey(w,sk,i,"reps") + '"></div>' +
+'<div class="set-col"><span class="set-label">lbs</span><input class="num" type="number" inputmode="decimal" placeholder="–" value="' + escHtml(lbs) + '" data-acc-k="' + accKey(w,sk,i,"lbs") + '"></div>' +
+'<div style="flex:1;min-width:80px"><span class="set-label">Notes</span><input class="acc-note" type="text" placeholder="optional" value="' + escHtml(note) + '" data-acc-k="' + accKey(w,sk,i,"note") + '"></div>' +
+'</div></div>';
 }
-document.getElementById(“acc-list”).innerHTML = html;
+document.getElementById("acc-list").innerHTML = html;
 
 // Bind
-var accInputs = document.querySelectorAll(”[data-acc-k]”);
+var accInputs = document.querySelectorAll("[data-acc-k]");
 for (var ai = 0; ai < accInputs.length; ai++) {
-accInputs[ai].addEventListener(“input”, function() { dbSet(this.getAttribute(“data-acc-k”), this.value); });
+accInputs[ai].addEventListener("input", function() { dbSet(this.getAttribute("data-acc-k"), this.value); });
 }
-var delBtns = document.querySelectorAll(”[data-del-idx]”);
+var delBtns = document.querySelectorAll("[data-del-idx]");
 for (var di = 0; di < delBtns.length; di++) {
-delBtns[di].addEventListener(“click”, function() { removeAccessory(parseInt(this.getAttribute(“data-del-idx”))); });
+delBtns[di].addEventListener("click", function() { removeAccessory(parseInt(this.getAttribute("data-del-idx"))); });
 }
 }
 
@@ -778,7 +778,7 @@ renderAccessories();
 function removeAccessory(idx) {
 var w = appState.week, sk = appState.sess;
 var cnt = getAccCount(w, sk);
-var fields = [“name”,“sets”,“reps”,“lbs”,“note”];
+var fields = ["name","sets","reps","lbs","note"];
 for (var i = idx; i < cnt - 1; i++) {
 for (var f = 0; f < fields.length; f++) {
 var nxt = db[accKey(w, sk, i+1, fields[f])];
@@ -798,8 +798,8 @@ renderAccessories();
 
 function renderShare() {
 var w = appState.week, sk = appState.sess, se = SESSIONS[sk];
-document.getElementById(“share-sub”).textContent = “Week “ + w + “ - “ + se.label + “ - Copy to chat”;
-document.getElementById(“report-box”).textContent = buildReport(w, sk);
+document.getElementById("share-sub").textContent = "Week " + w + " - " + se.label + " - Copy to chat";
+document.getElementById("report-box").textContent = buildReport(w, sk);
 }
 
 function buildReport(w, sk) {
@@ -808,56 +808,56 @@ var odd = (w % 2 !== 0);
 var fin = odd ? FINISHERS[sk].odd : FINISHERS[sk].even;
 var fl = function(f) {
 var v = dbGetNum(feelKey(w, sk, f));
-return v ? FEEL_LABELS[v] + “ (” + v + “/5)” : “not rated”;
+return v ? FEEL_LABELS[v] + " (" + v + "/5)" : "not rated";
 };
-var DIV = “==========================================”;
-var SEP = “——————————————”;
+var DIV = "==========================================";
+var SEP = "——————————————";
 var lines = [
-DIV, “ELK READY - COACH REPORT”, DIV,
-“WEEK    : “ + w + “ of 8  (” + WG[w].label.toUpperCase() + “)”,
-“SESSION : “ + se.label,
-“DAY     : “ + se.day,
-“SCHEME  : “ + se.scheme,
-“”, “WEIGHTS & REPS”, SEP
+DIV, "ELK READY - COACH REPORT", DIV,
+"WEEK    : " + w + " of 8  (" + WG[w].label.toUpperCase() + ")",
+"SESSION : " + se.label,
+"DAY     : " + se.day,
+"SCHEME  : " + se.scheme,
+"", "WEIGHTS & REPS", SEP
 ];
 
 for (var ei = 0; ei < se.exercises.length; ei++) {
 var ex = se.exercises[ei];
-var sets = “”;
+var sets = "";
 for (var s = 1; s <= ex.sets; s++) {
-sets += “  S” + s + “=” + (db[wk(w,sk,ex.id,s)] || “–”) + “lb x “ + (db[rk(w,sk,ex.id,s)] || “–”) + “r”;
+sets += "  S" + s + "=" + (db[wk(w,sk,ex.id,s)] || "–") + "lb x " + (db[rk(w,sk,ex.id,s)] || "–") + "r";
 }
-var nm = ex.name + (ex.tempo ? “ [3010]” : “”) + (ex.main ? “ *” : “”);
-while (nm.length < 26) nm += “ “;
+var nm = ex.name + (ex.tempo ? " [3010]" : "") + (ex.main ? " *" : "");
+while (nm.length < 26) nm += " ";
 lines.push(nm + sets.trim());
 }
 
 var finNote = db[finNoteKey(w, sk)];
-lines.push(””, “FINISHER : “ + fin.l, “         “ + fin.d);
-if (finNote && finNote.trim()) lines.push(”         Note: “ + finNote.trim());
+lines.push("", "FINISHER : " + fin.l, "         " + fin.d);
+if (finNote && finNote.trim()) lines.push("         Note: " + finNote.trim());
 
-lines.push(””, “FEEL”, SEP);
-lines.push(“Body Feel  : “ + fl(“bodyFeel”));
-lines.push(“Recovery   : “ + fl(“recovery”));
-lines.push(“Energy     : “ + fl(“energy”));
-var rpe = dbGetNum(feelKey(w, sk, “rpe”));
-lines.push(“RPE        : “ + (rpe ? rpe + “/10” : “not rated”));
-var sore = dbGetArr(feelKey(w, sk, “sore”));
-lines.push(“Soreness   : “ + (sore.length ? sore.join(”, “) : “none”));
-var stall = dbGetArr(feelKey(w, sk, “stall”));
-lines.push(“Stalling   : “ + (stall.length ? stall.join(”, “) : “none”));
+lines.push("", "FEEL", SEP);
+lines.push("Body Feel  : " + fl("bodyFeel"));
+lines.push("Recovery   : " + fl("recovery"));
+lines.push("Energy     : " + fl("energy"));
+var rpe = dbGetNum(feelKey(w, sk, "rpe"));
+lines.push("RPE        : " + (rpe ? rpe + "/10" : "not rated"));
+var sore = dbGetArr(feelKey(w, sk, "sore"));
+lines.push("Soreness   : " + (sore.length ? sore.join(", ") : "none"));
+var stall = dbGetArr(feelKey(w, sk, "stall"));
+lines.push("Stalling   : " + (stall.length ? stall.join(", ") : "none"));
 
 // Accessories
 var cnt = getAccCount(w, sk);
 if (cnt > 0) {
-lines.push(””, “ACCESSORY WORK”, SEP);
+lines.push("", "ACCESSORY WORK", SEP);
 for (var ai = 0; ai < cnt; ai++) {
-var anm = dbGet(accKey(w,sk,ai,“name”));
+var anm = dbGet(accKey(w,sk,ai,"name"));
 if (anm.trim()) {
-lines.push(”  “ + anm +
-“ - “ + dbGet(accKey(w,sk,ai,“sets”)) + “x” + dbGet(accKey(w,sk,ai,“reps”)) +
-(dbGet(accKey(w,sk,ai,“lbs”)) ? “ @ “ + dbGet(accKey(w,sk,ai,“lbs”)) + “lbs” : “”) +
-(dbGet(accKey(w,sk,ai,“note”)) ? “ (” + dbGet(accKey(w,sk,ai,“note”)) + “)” : “”));
+lines.push("  " + anm +
+" - " + dbGet(accKey(w,sk,ai,"sets")) + "x" + dbGet(accKey(w,sk,ai,"reps")) +
+(dbGet(accKey(w,sk,ai,"lbs")) ? " @ " + dbGet(accKey(w,sk,ai,"lbs")) + "lbs" : "") +
+(dbGet(accKey(w,sk,ai,"note")) ? " (" + dbGet(accKey(w,sk,ai,"note")) + ")" : ""));
 }
 }
 }
@@ -869,19 +869,19 @@ var cn = db[condKey(w, CONDITIONING[ci].id)];
 if (cn && cn.trim()) { hasCondNote = true; break; }
 }
 if (hasCondNote) {
-lines.push(””, “CONDITIONING NOTES”, SEP);
+lines.push("", "CONDITIONING NOTES", SEP);
 for (var ci2 = 0; ci2 < CONDITIONING.length; ci2++) {
 var cn2 = db[condKey(w, CONDITIONING[ci2].id)];
-if (cn2 && cn2.trim()) lines.push(CONDITIONING[ci2].label + “: “ + cn2.trim());
+if (cn2 && cn2.trim()) lines.push(CONDITIONING[ci2].label + ": " + cn2.trim());
 }
 }
 
 var note = db[noteKey(w, sk)];
-if (note && note.trim()) lines.push(””, “NOTES”, SEP, note.trim());
+if (note && note.trim()) lines.push("", "NOTES", SEP, note.trim());
 var msg = db[msgKey(w, sk)];
-if (msg && msg.trim()) lines.push(””, “FOR COACH”, SEP, msg.trim());
-lines.push(””, DIV);
-return lines.join(”\n”);
+if (msg && msg.trim()) lines.push("", "FOR COACH", SEP, msg.trim());
+lines.push("", DIV);
+return lines.join("\n");
 }
 
 // ============================================================
@@ -891,30 +891,30 @@ return lines.join(”\n”);
 function doExport() {
 try {
 var code = btoa(unescape(encodeURIComponent(JSON.stringify(db))));
-document.getElementById(“export-box”).value = code;
+document.getElementById("export-box").value = code;
 navigator.clipboard.writeText(code)
-.then(function() { showToast(“Copied - paste into Notes app”); })
-.catch(function() { showToast(“Code shown below - copy manually”); });
-} catch(e) { showToast(“Export failed”, “err”); }
+.then(function() { showToast("Copied - paste into Notes app"); })
+.catch(function() { showToast("Code shown below - copy manually"); });
+} catch(e) { showToast("Export failed", "err"); }
 }
 
 function doImport() {
-var raw = document.getElementById(“import-input”).value.trim();
-if (!raw) { showToast(“Paste your export code first”, “err”); return; }
+var raw = document.getElementById("import-input").value.trim();
+if (!raw) { showToast("Paste your export code first", "err"); return; }
 try {
 db = JSON.parse(decodeURIComponent(escape(atob(raw))));
 dbSave();
-document.getElementById(“import-input”).value = “”;
-showToast(“Data restored!”);
+document.getElementById("import-input").value = "";
+showToast("Data restored!");
 goOverview();
-} catch(e) { showToast(“Invalid code - check and try again”, “err”); }
+} catch(e) { showToast("Invalid code - check and try again", "err"); }
 }
 
 function doClear() {
-if (!confirm(“Delete ALL data? This cannot be undone. Export first if you want a backup.”)) return;
+if (!confirm("Delete ALL data? This cannot be undone. Export first if you want a backup.")) return;
 db = {};
 localStorage.removeItem(STORAGE_KEY);
-showToast(“All data cleared”);
+showToast("All data cleared");
 goOverview();
 }
 
@@ -923,11 +923,11 @@ goOverview();
 // ============================================================
 
 function escHtml(s) {
-return String(s || “”)
-.replace(/&/g, “&”)
-.replace(/”/g, “"”)
-.replace(/</g, “<”)
-.replace(/>/g, “>”);
+return String(s || "")
+.replace(/&/g, "&amp;")
+.replace(/"/g, "&quot;")
+.replace(/</g, "&lt;")
+.replace(/>/g, "&gt;");
 }
 
 // ============================================================
@@ -938,36 +938,32 @@ return String(s || “”)
 dbLoad();
 
 // Wire navigation
-document.getElementById(“nav-program”).addEventListener(“click”, goOverview);
-document.getElementById(“nav-backup”).addEventListener(“click”, goData);
-document.getElementById(“back-from-day”).addEventListener(“click”, goOverview);
-document.getElementById(“back-from-share”).addEventListener(“click”, goDay);
-document.getElementById(“back-from-data”).addEventListener(“click”, goOverview);
-document.getElementById(“back-to-overview-btn”).addEventListener(“click”, goOverview);
-document.getElementById(“share-btn”).addEventListener(“click”, goShare);
-document.getElementById(“go-to-data-btn”).addEventListener(“click”, goData);
-document.getElementById(“add-acc-btn”).addEventListener(“click”, addAccessory);
-document.getElementById(“export-btn”).addEventListener(“click”, doExport);
-document.getElementById(“import-btn”).addEventListener(“click”, doImport);
-document.getElementById(“clear-btn”).addEventListener(“click”, doClear);
-document.getElementById(“copy-btn”).addEventListener(“click”, function() {
-navigator.clipboard.writeText(document.getElementById(“report-box”).textContent)
-.then(function() { showToast(“Copied - paste to coach!”); })
-.catch(function() { showToast(“Select text above and copy manually”); });
+document.getElementById("nav-program").addEventListener("click", goOverview);
+document.getElementById("nav-backup").addEventListener("click", goData);
+document.getElementById("back-from-day").addEventListener("click", goOverview);
+document.getElementById("back-from-share").addEventListener("click", goDay);
+document.getElementById("back-from-data").addEventListener("click", goOverview);
+document.getElementById("back-to-overview-btn").addEventListener("click", goOverview);
+document.getElementById("share-btn").addEventListener("click", goShare);
+document.getElementById("go-to-data-btn").addEventListener("click", goData);
+document.getElementById("add-acc-btn").addEventListener("click", addAccessory);
+document.getElementById("export-btn").addEventListener("click", doExport);
+document.getElementById("import-btn").addEventListener("click", doImport);
+document.getElementById("clear-btn").addEventListener("click", doClear);
+document.getElementById("copy-btn").addEventListener("click", function() {
+navigator.clipboard.writeText(document.getElementById("report-box").textContent)
+.then(function() { showToast("Copied - paste to coach!"); })
+.catch(function() { showToast("Select text above and copy manually"); });
 });
 
 // Render
 try {
 renderOverview();
 } catch(e) {
-var errDiv = document.createElement(“div”);
-errDiv.style.cssText = “background:#3a0000;border:1px solid #c87e7e;border-radius:8px;padding:14px;margin:12px;color:#c87e7e;font-family:monospace;font-size:11px;white-space:pre-wrap;word-break:break-all”;
-errDiv.textContent = “JS ERROR in renderOverview:
-“ + e.message + “
-
-Stack:
-“ + (e.stack || “no stack”);
-document.getElementById(“screen-overview”).appendChild(errDiv);
+var errDiv = document.createElement("div");
+errDiv.style.cssText = "background:#3a0000;border:1px solid #c87e7e;border-radius:8px;padding:14px;margin:12px;color:#c87e7e;font-family:monospace;font-size:11px;white-space:pre-wrap;word-break:break-all";
+errDiv.textContent = "JS ERROR in renderOverview:\n" + e.message + "\n\nStack:\n" + (e.stack || "no stack");
+document.getElementById("screen-overview").appendChild(errDiv);
 }
 
 </script>
