@@ -484,11 +484,7 @@ function renderOverview() {
       '<div><div class="cond-name">' + c.label + ' - ' + c.day + '</div>' +
       '<div class="cond-det">' + c.detail(w) + '</div></div></div>' +
       '<textarea class="sm" data-cond="' + c.id + '" placeholder="Notes - duration, effort, terrain...">' + escHtml(cval) + '</textarea>' +
-
-```
-  '</div>';
-```
-
+      '</div>';
 }
 document.getElementById(“cond-list”).innerHTML = condHtml;
 
