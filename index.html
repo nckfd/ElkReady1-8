@@ -947,7 +947,13 @@ navigator.clipboard.writeText(document.getElementById("report-box").textContent)
 });
 
 // Render
-renderOverview();
+try {
+  renderOverview();
+} catch(e) {
+  document.getElementById("session-list").innerHTML =
+    '<div style="background:#3a0000;color:#ff6666;padding:14px;border-radius:8px;font-size:12px;font-family:monospace;margin:8px 0">' +
+    'JS ERROR: ' + e.message + '<br>' + (e.stack || '') + '</div>';
+}
 
 </script>
 </body>
