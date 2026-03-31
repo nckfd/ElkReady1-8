@@ -131,7 +131,7 @@ input.acc-note{flex:1;min-width:80px;background:rgba(255,255,255,0.06);border:1p
 <div id="screen-overview" class="screen active">
   <div class="appbar">
     <h1>Elk Ready</h1>
-    <p>Phase 1 - Weeks 1-8 - Full Body DUP</p>
+    <p>Phase 1 - Weeks 1-8 - 80/20 Aerobic + Full Body Strength</p>
     <div id="save-status"></div>
   </div>
   <div class="week-tabs" id="week-tabs"></div>
@@ -242,30 +242,26 @@ input.acc-note{flex:1;min-width:80px;background:rgba(255,255,255,0.06);border:1p
 // ============================================================
 
 var WG = {
-  1: {label:"Orientation",    desc:"Establish working weights. Leave 2-3 reps in the tank. Log everything as a baseline. No PRs today.", effort:1},
-  2: {label:"Solidify",       desc:"Repeat Week 1 weights if they felt hard, or make first small jumps. Focus on nailing 3010 tempo Wednesday.", effort:2},
-  3: {label:"First Push",     desc:"Begin linear progression in earnest. Add prescribed weight to every main lift. The program officially starts.", effort:3},
-  4: {label:"Build",          desc:"Continue progression. TUT sets should feel like real work. Ruck increases to 30 lbs. Monitor recovery.", effort:4},
-  5: {label:"Peak Volume",    desc:"All three schemes should feel challenging. Heavy sets should hit 8-9/10 on last set. Push conditioning durations.", effort:5},
-  6: {label:"Consolidate",    desc:"Quality over chasing numbers. Tempo discipline non-negotiable. Ruck increases to 35 lbs.", effort:4},
-  7: {label:"Deload",         desc:"Drop volume 30-40%. Keep weights identical. Flush fatigue, stay primed. Finishers drop to 12 min.", effort:2},
-  8: {label:"Deload + Assess",desc:"Same volume as Week 7. Assess what's working. By Friday you should feel fresh and ready for Phase 2.", effort:1}
+  1: {label:"Orientation",    desc:"Establish working weights. Leave 2-3 reps in the tank. All cardio at Zone 2 - nose breathing only. Build the aerobic base.", effort:1},
+  2: {label:"Solidify",       desc:"Hold Week 1 weights. Nail 3010 tempo on TUT day. Run 30-35 min Zone 2. Ruck at easy effort. Two full rest days.", effort:2},
+  3: {label:"First Push",     desc:"Add 5 lbs to main lifts. Run 35-45 min Zone 2. Ruck with 25 lbs. Aerobic base building in full effect.", effort:3},
+  4: {label:"Build",          desc:"Continue progression. TUT should feel like real work. Run 45-50 min Zone 2. Ruck 25 lbs. Monitor lower back.", effort:4},
+  5: {label:"Peak Volume",    desc:"Heavy day at 8-9/10 last set. Run 50-60 min Zone 2. Ruck 30 lbs. This is your highest aerobic volume week.", effort:5},
+  6: {label:"Consolidate",    desc:"Quality over chasing numbers. Run 50-60 min Zone 2. Ruck 30 lbs. Tempo discipline non-negotiable.", effort:4},
+  7: {label:"Deload",         desc:"Drop lifting volume 30-40%. Keep weights identical. Run 30 min easy. Ruck 25 lbs. Flush fatigue.", effort:2},
+  8: {label:"Deload + Assess",desc:"Same as Week 7. By Friday you should feel fresh, aerobically capable, and ready for Phase 2 VO2 max work.", effort:1}
 };
 
 var EFFORT_COLORS = ["","#3a5a3a","#4a7a4a","#7a9a4a","#c8a030","#c87030","#c85030","#7a9a4a","#3a5a3a"];
 
 var FINISHERS = {
   A: {
-    odd:  {l:"Incline Treadmill Walk",  d:"12-15 min at 8-10% grade, moderate pace", t:"cardio"},
-    even: {l:"Sled Push / Step-ups",    d:"5x20 yds sled OR 3x10/leg weighted step-ups", t:"strength"}
+    odd:  {l:"Farmer's Carry Ladder",   d:"3 lengths, increasing weight each length - light to heavy", t:"strength"},
+    even: {l:"Incline Treadmill Walk",  d:"12-15 min at 8-10% grade, Zone 2 pace", t:"cardio"}
   },
   B: {
-    odd:  {l:"Farmer's Carry Ladder",   d:"3 lengths, increasing weight each length", t:"strength"},
-    even: {l:"Incline Treadmill Walk",  d:"12-15 min at 8-10% grade, moderate pace", t:"cardio"}
-  },
-  C: {
-    odd:  {l:"Zone 2 Run",              d:"12-15 min, fully conversational pace", t:"cardio"},
-    even: {l:"Farmer's Carry Ladder",   d:"3 lengths, increasing weight each length", t:"strength"}
+    odd:  {l:"Incline Treadmill Walk",  d:"12-15 min at 8-10% grade, Zone 2 pace", t:"cardio"},
+    even: {l:"Farmer's Carry Ladder",   d:"3 lengths, increasing weight each length - light to heavy", t:"strength"}
   }
 };
 
@@ -275,8 +271,8 @@ var SESSIONS = {
     exercises:[
       {id:"squat",  name:"Back Squat",          sets:4, reps:"3-5",    rest:"3 min",  main:true},
       {id:"pullup", name:"Weighted Pull-ups",    sets:4, reps:"3-5",    rest:"3 min",  main:true},
-      {id:"dbrdl",  name:"DB Romanian Deadlift", sets:3, reps:"5-6",    rest:"2 min"},
       {id:"dbbench",name:"DB Bench Press",       sets:3, reps:"5-6",    rest:"2 min"},
+      {id:"dbrdl",  name:"DB Romanian Deadlift", sets:3, reps:"5-6",    rest:"2 min"},
       {id:"pallof", name:"Pallof Press",         sets:3, reps:"8/side", rest:"2 min"}
     ]
   },
@@ -289,25 +285,19 @@ var SESSIONS = {
       {id:"bss",     name:"DB Bulgarian Split Squat",  sets:3, reps:"12/leg", rest:"60 sec", tempo:true},
       {id:"deadbug", name:"Dead Bug",                  sets:3, reps:"10/side",rest:"60 sec", tempo:true}
     ]
-  },
-  C: {
-    label:"Lift C - Medium", day:"Friday", icon:"Lift C", scheme:"4x6-8 reps | 2 min main, 60 sec accessories", color:"#a07ec8",
-    exercises:[
-      {id:"squat2", name:"Back Squat",          sets:4, reps:"6-8",    rest:"2 min",  main:true},
-      {id:"bbench", name:"Barbell Bench Press", sets:4, reps:"6-8",    rest:"2 min",  main:true},
-      {id:"brow2",  name:"Barbell Row",          sets:4, reps:"6-8",    rest:"2 min",  main:true},
-      {id:"dbohp",  name:"DB Overhead Press",   sets:3, reps:"6-8",    rest:"60 sec"},
-      {id:"stepup", name:"DB Step-ups",         sets:3, reps:"8/leg",  rest:"60 sec"},
-      {id:"carry",  name:"Farmer's Carry",      sets:3, reps:"40 yds", rest:"60 sec"}
-    ]
   }
 };
 
+var RUN_TARGETS = {1:"20-30",2:"30-35",3:"35-45",4:"45-50",5:"50-60",6:"50-60",7:"30",8:"40"};
+var RUCK_LBS = {1:0,2:15,3:25,4:25,5:30,6:30,7:25,8:35};
+
 var CONDITIONING = [
-  {id:"run",  label:"Run",  day:"Tuesday",  icon:"Run",  color:"#7e9ec8",
-   detail:function(w){ return "30-40 min | Zone 2 - fully conversational pace"; }},
-  {id:"ruck", label:"Ruck", day:"Thursday", icon:"Ruck", color:"#c87e7e",
-   detail:function(w){ return "45-60 min | " + (w<=3?25:w<=6?30:35) + " lbs | Hilly terrain or incline treadmill (6-10%)"; }}
+  {id:"run1", label:"Zone 2 Run", day:"Tuesday",  icon:"Run",  color:"#7e9ec8",
+   detail:function(w){ return RUN_TARGETS[w]+" min | Zone 2 - nose breathing only | Fully conversational pace"; }},
+  {id:"ruck", label:"Ruck",       day:"Thursday", icon:"Ruck", color:"#c87e7e",
+   detail:function(w){ return "45-60 min | "+(RUCK_LBS[w]>0?RUCK_LBS[w]+" lbs":"No weight - easy hike")+" | Hilly terrain or incline treadmill (6-10%)"; }},
+  {id:"run2", label:"Zone 2 Run", day:"Friday",   icon:"Run",  color:"#7e9ec8",
+   detail:function(w){ return RUN_TARGETS[w]+" min | Zone 2 - nose breathing only | Same effort as Tuesday"; }}
 ];
 
 var FEEL_LABELS = ["","Rough","Tired","OK","Good","Great"];
@@ -466,7 +456,7 @@ function renderOverview() {
 
   // Sessions
   var sessHtml = "";
-  var sessKeys = ["A", "B", "C"];
+  var sessKeys = ["A", "B"];
   for (var si = 0; si < sessKeys.length; si++) {
     var sk = sessKeys[si];
     var se = SESSIONS[sk];
@@ -491,7 +481,7 @@ function renderOverview() {
     var cval = dbGet(condKey(w, c.id));
     condHtml += '<div class="cond-card" style="border-left-color:' + c.color + '">' +
       '<div class="cond-top">' +
-      '<div class="cond-icon">' + (c.id === "run" ? "&#127939;" : "&#127506;") + '</div>' +
+      '<div class="cond-icon">' + (c.id !== "ruck" ? "&#127939;" : "&#127506;") + '</div>' +
       '<div><div class="cond-name">' + c.label + ' - ' + c.day + '</div>' +
       '<div class="cond-det">' + c.detail(w) + '</div></div></div>' +
       '<textarea class="sm" data-cond="' + c.id + '" placeholder="Notes - duration, effort, terrain...">' + escHtml(cval) + '</textarea>' +
