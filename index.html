@@ -213,6 +213,11 @@ input.acc-note{flex:1;min-width:80px;background:rgba(255,255,255,0.06);border:1p
       <button class="btn btn-gold" id="import-btn">Restore My Data</button>
     </div>
     <div class="data-sec">
+      <h3 style="color:#a07ec8">Analyze Progress with Claude</h3>
+      <p>Sends all your logged training data to Claude for a full progress analysis — strength trends, recovery patterns, and recommendations.</p>
+      <button class="btn" style="background:rgba(160,126,200,0.12);border:1px solid #a07ec8!important;color:#a07ec8" id="analyze-btn">Analyze My Progress with Claude</button>
+    </div>
+    <div class="data-sec">
       <h3 style="color:#c87e7e">Clear All Data</h3>
       <p>Permanently deletes all your logged data. Cannot be undone. Export first.</p>
       <button class="btn btn-red" id="clear-btn">Clear All Data</button>
@@ -875,6 +880,81 @@ return lines.join("\n");
 }
 
 // ============================================================
+// ANALYZE WITH CLAUDE
+// ============================================================
+
+function buildProgressReport() {
+var DIV = "==========================================";
+var SEP = "--------------------------";
+var lines = [DIV, "ELK READY - FULL PROGRESS REPORT", DIV,
+"Phase 1 - Weeks 1-8 | 80/20 Aerobic + Full Body Strength", ""];
+var hasAnyData = false;
+for (var w = 1; w <= 8; w++) {
+var wLines = ["WEEK " + w + " - " + WG[w].label.toUpperCase(), SEP];
+var wHasData = false;
+var sessKeys = ["A", "B"];
+for (var si = 0; si < sessKeys.length; si++) {
+var sk = sessKeys[si];
+var se = SESSIONS[sk];
+if (!sessionHasLogs(w, sk)) continue;
+wHasData = true;
+hasAnyData = true;
+wLines.push(se.label + " (" + se.day + ")");
+for (var ei = 0; ei < se.exercises.length; ei++) {
+var ex = se.exercises[ei];
+var sets = "";
+for (var s = 1; s <= ex.sets; s++) {
+var lb = db[wk(w, sk, ex.id, s)];
+var rp = db[rk(w, sk, ex.id, s)];
+if (lb || rp) sets += " S" + s + "=" + (lb || "-") + "lb x " + (rp || "-") + "r";
+}
+if (sets) wLines.push("  " + ex.name + ":" + sets);
+}
+var feelParts = [];
+var rpe = dbGetNum(feelKey(w, sk, "rpe"));
+var bf = dbGetNum(feelKey(w, sk, "bodyFeel"));
+var rec = dbGetNum(feelKey(w, sk, "recovery"));
+var eng = dbGetNum(feelKey(w, sk, "energy"));
+if (rpe) feelParts.push("RPE " + rpe + "/10");
+if (bf) feelParts.push("Feel " + FEEL_LABELS[bf]);
+if (rec) feelParts.push("Recovery " + FEEL_LABELS[rec]);
+if (eng) feelParts.push("Energy " + FEEL_LABELS[eng]);
+if (feelParts.length) wLines.push("  " + feelParts.join(" | "));
+var sore = dbGetArr(feelKey(w, sk, "sore"));
+if (sore.length) wLines.push("  Soreness: " + sore.join(", "));
+var stall = dbGetArr(feelKey(w, sk, "stall"));
+if (stall.length && stall[0] !== "None") wLines.push("  Stalling: " + stall.join(", "));
+var note = db[noteKey(w, sk)];
+if (note && note.trim()) wLines.push("  Note: " + note.trim());
+}
+for (var ci = 0; ci < CONDITIONING.length; ci++) {
+var cn = db[condKey(w, CONDITIONING[ci].id)];
+if (cn && cn.trim()) {
+wHasData = true;
+hasAnyData = true;
+wLines.push("  " + CONDITIONING[ci].label + " (" + CONDITIONING[ci].day + "): " + cn.trim());
+}
+}
+if (wHasData) { lines = lines.concat(wLines); lines.push(""); }
+}
+if (!hasAnyData) return null;
+lines.push(DIV);
+lines.push("Please analyze my training progress across these weeks. Cover:");
+lines.push("- Strength progression on main lifts");
+lines.push("- Recovery and readiness trends");
+lines.push("- Any soreness or stalling patterns");
+lines.push("- How my conditioning is developing");
+lines.push("- What to focus on going forward");
+return lines.join("\n");
+}
+
+function doAnalyze() {
+var report = buildProgressReport();
+if (!report) { showToast("No logged data yet - complete some sessions first", "err"); return; }
+window.open("https://claude.ai/new?q=" + encodeURIComponent(report), "_blank");
+}
+
+// ============================================================
 // EXPORT / IMPORT
 // ============================================================
 
@@ -937,6 +1017,7 @@ document.getElementById("back-to-overview-btn").addEventListener("click", goOver
 document.getElementById("share-btn").addEventListener("click", goShare);
 document.getElementById("go-to-data-btn").addEventListener("click", goData);
 document.getElementById("add-acc-btn").addEventListener("click", addAccessory);
+document.getElementById("analyze-btn").addEventListener("click", doAnalyze);
 document.getElementById("export-btn").addEventListener("click", doExport);
 document.getElementById("import-btn").addEventListener("click", doImport);
 document.getElementById("clear-btn").addEventListener("click", doClear);
