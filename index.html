@@ -59,6 +59,7 @@ h3{font-size:14px;color:#c8a96e}
 .ex-meta{font-size:11px;color:#4a6a4a;margin-bottom:8px}
 .ex-note{font-size:10px;color:#7a9a7a;font-style:italic;margin-bottom:8px}
 .ss-badge{font-size:9px;background:rgba(200,169,110,0.1);color:#c8a96e;padding:2px 6px;border-radius:6px;letter-spacing:1px;margin-left:6px;vertical-align:middle}
+.tempo-badge{font-size:9px;background:rgba(126,184,164,0.12);color:#7eb8a4;padding:2px 6px;border-radius:6px;letter-spacing:1px;margin-left:6px;vertical-align:middle}
 .sets-row{display:flex;gap:6px;flex-wrap:wrap}
 .set-col{display:flex;flex-direction:column;align-items:center;gap:2px}
 .set-label{font-size:8px;color:#3a5a3a;letter-spacing:1px;text-transform:uppercase}
@@ -112,7 +113,7 @@ textarea.sm{min-height:40px;font-size:12px;margin-top:8px;resize:none}
   <div class="week-tabs" id="week-tabs"></div>
   <div class="body">
     <div class="card" id="goal-card"></div>
-    <div class="sec-label">MONDAY LIFTING</div>
+    <div class="sec-label" id="sess-section-label">MONDAY LIFTING</div>
     <div id="session-list"></div>
     <div class="sec-label" style="margin-top:14px">CONDITIONING</div>
     <div id="cond-list"></div>
@@ -274,6 +275,18 @@ var SESSIONS = {
       {id:"hkpress",name:"Half Kneeling DB Press", sets:3, reps:"8-10",    rest:"90 sec"}
     ]
   },
+  B: {
+    label:"Lift B — Deload", day:"Wednesday",
+    scheme:"3 sets | Hold all Phase 2 weights | 3010 tempo | 60 sec rest",
+    color:"#7eb8a4",
+    exercises:[
+      {id:"rdl",     name:"Romanian Deadlift",          sets:3, reps:"12-15",   rest:"60 sec", tempo:true},
+      {id:"latpull", name:"Lat Pulldown",               sets:3, reps:"12-15",   rest:"60 sec", tempo:true},
+      {id:"incline", name:"DB Incline Press",           sets:3, reps:"12-15",   rest:"60 sec", tempo:true},
+      {id:"bss",     name:"DB Bulgarian Split Squat",   sets:3, reps:"10-12/leg",rest:"60 sec", tempo:true},
+      {id:"pallof",  name:"Pallof Press",               sets:3, reps:"8-10/side",rest:"60 sec", tempo:true}
+    ]
+  },
   M: {
     label:"Full Body Maintenance", day:"Monday",
     scheme:"2x10-12 reps | 60-90 sec rest | 40 min",
@@ -289,7 +302,7 @@ var SESSIONS = {
   }
 };
 
-function getSessionKey(w) { return w === 1 ? "D" : "M"; }
+function getSessionKeys(w) { return w === 1 ? ["D","B"] : ["M"]; }
 
 var ZONE2 = {1:"75", 2:"80", 3:"85-90", 4:"90", 5:"45"};
 
@@ -312,25 +325,32 @@ var FRI = {
 };
 
 function getWeekConditioning(w) {
+  if (w === 1) {
+    return [
+      {id:"run1",   label:"Zone 2 Run",              day:"Tuesday",
+       color:"#7e9ec8", detail:"75 min | Zone 2 — nose breathing only | Fully conversational pace"},
+      {id:"stairs", label:"Stair Climber Intervals", day:"Thursday",
+       color:"#a07ec8", detail:"25 lb pack | 4x4 min hard / 4 min easy | 8 min warmup + 5 min cooldown | Carries over from Phase 2 unchanged",
+       intNote:"Hard effort — all-out on work intervals", isInterval:true},
+      {id:"run2",   label:"Zone 2 Run",              day:"Friday",
+       color:"#7e9ec8", detail:"75 min | Zone 2 — nose breathing only | Same effort as Tuesday"}
+    ];
+  }
   var wed = WED[w], fri = FRI[w];
-  var packNote = fri.carryover ? " lb pack" : " lb pack (bumper plates)";
-  var carryNote = fri.carryover ? " | Carries over from Phase 2 unchanged" : "";
-  var friDetail = fri.pack + packNote + " | " + fri.sets + (fri.wrap ? " | " + fri.wrap : "") + carryNote;
-  var friLabel  = "Stair Climber Intervals";
+  var friDetail = fri.pack + " lb pack (bumper plates) | " + fri.sets + (fri.wrap ? " | " + fri.wrap : "");
   return [
-    {id:"run1",   label:"Zone 2 Run",  day:"Tuesday",
+    {id:"run1",   label:"Zone 2 Run",              day:"Tuesday",
      color:"#7e9ec8", detail: ZONE2[w] + " min | Zone 2 — nose breathing only | Fully conversational pace"},
-    {id:"wed",    label:wed.label,     day:"Wednesday",
+    {id:"wed",    label:wed.label,                 day:"Wednesday",
      color: wed.isInterval ? "#c87e7e" : "#7e9ec8",
      detail: wed.detail,
      intNote: wed.isInterval ? "Hard effort = 90-95% max — cannot hold conversation, cannot nose breathe" : "",
      isInterval: wed.isInterval},
-    {id:"run2",   label:"Zone 2 Run",  day:"Thursday",
+    {id:"run2",   label:"Zone 2 Run",              day:"Thursday",
      color:"#7e9ec8", detail: ZONE2[w] + " min | Zone 2 — nose breathing only | Same effort as Tuesday"},
-    {id:"fri",    label:friLabel,      day:"Friday",
+    {id:"fri",    label:"Stair Climber Intervals", day:"Friday",
      color:"#a07ec8", detail: friDetail,
-     intNote: "Hard effort — all-out on work intervals",
-     isInterval: true}
+     intNote:"Hard effort — all-out on work intervals", isInterval:true}
   ];
 }
 
@@ -456,13 +476,17 @@ function renderOverview() {
     '<div class="goal-desc">'+wg.desc+'</div>'+
     '<div class="effort-row"><span class="effort-label">Effort</span>'+pips+'</div>';
 
-  var sk = getSessionKey(w), se = SESSIONS[sk], logged = sessionHasLogs(w, sk);
-  document.getElementById("session-list").innerHTML =
-    '<div class="sess-card" data-sess="'+sk+'" style="border-left-color:'+se.color+(logged?";border-color:"+se.color+"55":"")+'">'+
-    '<div class="sess-info"><h3>'+se.label+'</h3><div class="day-tag">'+se.day.toUpperCase()+'</div><div class="scheme">'+se.scheme+'</div></div>'+
-    '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">'+
-    (logged?'<span class="logged-badge">Logged</span>':'')+
-    '<span class="sess-arrow">&#8250;</span></div></div>';
+  var skeys = getSessionKeys(w), sessHtml = "";
+  document.getElementById("sess-section-label").textContent = w === 1 ? "LIFTING" : "MONDAY LIFTING";
+  for (var si2 = 0; si2 < skeys.length; si2++) {
+    var sk2 = skeys[si2], se2 = SESSIONS[sk2], logged2 = sessionHasLogs(w, sk2);
+    sessHtml += '<div class="sess-card" data-sess="'+sk2+'" style="border-left-color:'+se2.color+(logged2?";border-color:"+se2.color+"55":"")+'">'+
+      '<div class="sess-info"><h3>'+se2.label+'</h3><div class="day-tag">'+se2.day.toUpperCase()+'</div><div class="scheme">'+se2.scheme+'</div></div>'+
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">'+
+      (logged2?'<span class="logged-badge">Logged</span>':'')+
+      '<span class="sess-arrow">&#8250;</span></div></div>';
+  }
+  document.getElementById("session-list").innerHTML = sessHtml;
 
   var conds = getWeekConditioning(w), condHtml = "";
   for (var ci = 0; ci < conds.length; ci++) {
@@ -506,7 +530,7 @@ function renderDay() {
   for (var ei = 0; ei < se.exercises.length; ei++) {
     var ex = se.exercises[ei];
     exHtml += '<div class="ex-card">'+
-      '<div class="ex-name">'+ex.name+(ex.ss?'<span class="ss-badge">'+ex.ss+'</span>':'')+'</div>'+
+      '<div class="ex-name">'+ex.name+(ex.ss?'<span class="ss-badge">'+ex.ss+'</span>':'')+(ex.tempo?'<span class="tempo-badge">3010</span>':'')+'</div>'+
       '<div class="ex-meta">'+ex.sets+' sets x '+ex.reps+' | Rest '+ex.rest+'</div>'+
       (ex.note?'<div class="ex-note">'+ex.note+'</div>':'')+
       '<div class="sets-row">';
