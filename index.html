@@ -106,7 +106,7 @@ textarea.sm{min-height:40px;font-size:12px;margin-top:8px;resize:none}
 <div id="screen-overview" class="screen active">
   <div class="appbar">
     <h1>Elk Ready</h1>
-    <p>Phase 3 &mdash; Hunt Peak &mdash; September 1</p>
+    <p>Phase 3 &mdash; Hunt Peak &mdash; July</p>
     <div id="save-status"></div>
   </div>
   <div class="week-tabs" id="week-tabs"></div>
@@ -250,15 +250,15 @@ var TOTAL_WEEKS = 5;
 
 var WG = {
   1: {label:"Deload",       effort:1, desc:"Lifting deloads only — 3 sets, hold all Phase 2 weights, no progression. Cardio unchanged. Body recovers before the interval block begins."},
-  2: {label:"Reintroduce",  effort:3, desc:"New lifting structure begins. First running intervals Wednesday 4x5 min. Stair climber with 30 lb pack Friday 4x4. Build momentum into the peak block."},
-  3: {label:"Build",        effort:4, desc:"Running intervals increase to 5x5 min. Stair climber 35 lb pack 5x4. Full body maintenance lifting. Aerobic capacity building."},
-  4: {label:"Peak",         effort:5, desc:"Hardest week. 5x6 min running intervals. 40 lb pack on stairs. Hunt simulation — this is what September 1 demands of you."},
-  5: {label:"Hunt Deload",  effort:1, desc:"Full recovery before the hunt. Drop all volume. Keep intensity. Arrive at September 1 recovered, sharp, and ready to perform."}
+  2: {label:"Reintroduce",  effort:3, desc:"New lifting structure begins. First running intervals Wednesday 4x5 min. Incline treadmill intervals Friday 30 lb pack. Build momentum into the peak block."},
+  3: {label:"Build",        effort:4, desc:"Running intervals increase to 5x5 min. Stair climber 35 lb pack 5x4. Full body maintenance lifting. Aerobic volume peaks this week."},
+  4: {label:"Peak",         effort:5, desc:"Hardest week of Phase 3. 5x6 min running intervals. 40 lb pack incline treadmill. This week defines your Phase 4 entry point."},
+  5: {label:"Phase 3 Out",  effort:1, desc:"Full recovery before Phase 4 August begins. Drop all volume. Keep intensity. Arrive at Phase 4 recovered, sharp, and ready to build."}
 };
 
 var EFFORT_COLORS = ["","#4a7a4a","#c8a030","#c87030","#c85030","#4a7a4a"];
 
-var TAB_SHORT = {1:"Deload",2:"Entry",3:"Build",4:"Peak",5:"Deload"};
+var TAB_SHORT = {1:"Deload",2:"Entry",3:"Build",4:"Peak",5:"Out"};
 
 var SESSIONS = {
   D: {
@@ -291,7 +291,7 @@ var SESSIONS = {
 
 function getSessionKey(w) { return w === 1 ? "D" : "M"; }
 
-var ZONE2 = {1:"75", 2:"75-80", 3:"80", 4:"80", 5:"45"};
+var ZONE2 = {1:"75", 2:"80", 3:"85-90", 4:"90", 5:"45"};
 
 var WED = {
   1: {label:"Zone 2 Run",        isInterval:false, detail:"75 min | Zone 2 — nose breathing only | Deload week — no intervals"},
@@ -301,28 +301,30 @@ var WED = {
   5: {label:"Running Intervals", isInterval:true,  detail:"10 min warmup | 3x5 min hard / 5 min easy | 10 min cooldown — deload volume"}
 };
 
+// Odd weeks = Stair Climber, Even weeks = Incline Treadmill 10-12% grade
 var FRI = {
-  1: {pack:25, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
-  2: {pack:30, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
-  3: {pack:35, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
-  4: {pack:40, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
-  5: {pack:25, sets:"3x4 min hard / 4 min easy — deload", wrap:""}
+  1: {equip:"Stair Climber",     pack:25, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
+  2: {equip:"Incline Treadmill", pack:30, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown", grade:"10-12% grade"},
+  3: {equip:"Stair Climber",     pack:35, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
+  4: {equip:"Incline Treadmill", pack:40, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown", grade:"10-12% grade"},
+  5: {equip:"Stair Climber",     pack:25, sets:"3x4 min hard / 4 min easy — deload", wrap:""}
 };
 
 function getWeekConditioning(w) {
   var wed = WED[w], fri = FRI[w];
-  var friDetail = fri.pack + " lb pack | " + fri.sets + (fri.wrap ? " | " + fri.wrap : "");
+  var friDetail = fri.pack + " lb pack | " + fri.sets + (fri.grade ? " | " + fri.grade : "") + (fri.wrap ? " | " + fri.wrap : "");
+  var friLabel  = fri.equip + " Intervals";
   return [
-    {id:"run1",   label:"Zone 2 Run",              day:"Tuesday",
+    {id:"run1",   label:"Zone 2 Run",  day:"Tuesday",
      color:"#7e9ec8", detail: ZONE2[w] + " min | Zone 2 — nose breathing only | Fully conversational pace"},
-    {id:"wed",    label:wed.label,                 day:"Wednesday",
+    {id:"wed",    label:wed.label,     day:"Wednesday",
      color: wed.isInterval ? "#c87e7e" : "#7e9ec8",
      detail: wed.detail,
      intNote: wed.isInterval ? "Hard effort = 90-95% max — cannot hold conversation, cannot nose breathe" : "",
      isInterval: wed.isInterval},
-    {id:"run2",   label:"Zone 2 Run",              day:"Thursday",
+    {id:"run2",   label:"Zone 2 Run",  day:"Thursday",
      color:"#7e9ec8", detail: ZONE2[w] + " min | Zone 2 — nose breathing only | Same effort as Tuesday"},
-    {id:"stairs", label:"Stair Climber Intervals", day:"Friday",
+    {id:"fri",    label:friLabel,      day:"Friday",
      color:"#a07ec8", detail: friDetail,
      intNote: "Hard effort — all-out on work intervals",
      isInterval: true}
@@ -446,7 +448,7 @@ function renderOverview() {
     pips += '<div class="pip" style="background:'+(p<wg.effort?EFFORT_COLORS[w]:"#1a2a1a")+'"></div>';
   }
   document.getElementById("goal-card").innerHTML =
-    '<div class="goal-meta"><span class="goal-wk">Week '+w+' of '+TOTAL_WEEKS+' &mdash; Phase 3 Hunt Peak</span></div>'+
+    '<div class="goal-meta"><span class="goal-wk">Week '+w+' of '+TOTAL_WEEKS+' &mdash; Phase 3 July</span></div>'+
     '<div class="goal-title">'+wg.label+'</div>'+
     '<div class="goal-desc">'+wg.desc+'</div>'+
     '<div class="effort-row"><span class="effort-label">Effort</span>'+pips+'</div>';
@@ -689,7 +691,7 @@ function buildReport(w, sk) {
   var SEP="------------------------------";
   var lines=[
     DIV,"ELK READY - COACH REPORT",DIV,
-    "PHASE   : 3 - Hunt Peak (September 1)",
+    "PHASE   : 3 - Hunt Peak (July)",
     "WEEK    : "+w+" of "+TOTAL_WEEKS+"  ("+WG[w].label.toUpperCase()+")",
     "SESSION : "+se.label,
     "DAY     : "+se.day,
