@@ -1,4 +1,4 @@
-var CACHE = "elk-ready-p2-v1";
+var CACHE = "elk-ready-p3-v1";
 var ASSETS = [
   "./",
   "./index.html",
