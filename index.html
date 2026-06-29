@@ -314,12 +314,12 @@ var STAIR_INT  = {2:"4x4 min hard / 4 min easy", 3:"5x4 min hard / 4 min easy", 
 function getWeekConditioning(w) {
   if (w === 1) {
     return [
-      {id:"run1", label:"Zone 2 Run", day:"Tuesday",
-       color:"#7e9ec8", detail: "50-60 min | Zone 2 - nose breathing only | Fully conversational pace"},
-      {id:"ruck",  label:"Ruck",       day:"Thursday",
-       color:"#c87e7e", detail: "45-60 min | 30 lbs | Hilly terrain or incline treadmill (6-10%)"},
-      {id:"run2", label:"Zone 2 Run", day:"Friday",
-       color:"#7e9ec8", detail: "50-60 min | Zone 2 - nose breathing only | Same effort as Tuesday"}
+      {id:"run1",   label:"Zone 2 Run",              day:"Tuesday",
+       color:"#7e9ec8", detail: "80 min | Zone 2 - nose breathing only | Fully conversational pace"},
+      {id:"run2",   label:"Zone 2 Run",              day:"Thursday",
+       color:"#7e9ec8", detail: "80 min | Zone 2 - nose breathing only | Same effort as Tuesday"},
+      {id:"stairs", label:"Stair Climber Intervals", day:"Friday",
+       color:"#a07ec8", detail: "25 lb pack | 4x4 min hard / 4 min easy | All-out on hard intervals", isInterval: true}
     ];
   }
   return [
