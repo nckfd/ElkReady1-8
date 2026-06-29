@@ -54,6 +54,13 @@ h3{font-size:14px;color:#c8a96e}
 .cond-day{font-size:10px;color:#4a6a4a;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
 .cond-detail{font-size:11px;color:#6a8a6a;line-height:1.6}
 .int-box{background:rgba(200,80,80,0.05);border:1px solid #5a2a2a;border-radius:6px;padding:8px 10px;margin-top:8px;font-size:11px;color:#c87e7e;line-height:1.5}
+.int-log-section{margin-top:8px;border-top:1px solid #1a2a1a;padding-top:8px}
+.int-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+.int-num{font-size:11px;color:#c8a96e;width:18px;text-align:center;flex-shrink:0;font-weight:bold;padding-top:6px}
+.int-time{width:100%;background:rgba(255,255,255,0.07);border:1px solid #2a3a2a;border-radius:6px;color:#d4c5a0;font-size:12px;padding:5px 6px;outline:none;font-family:Georgia,serif;margin-bottom:4px;display:block}
+.int-time:focus{border-color:#c8a96e}
+.rpe-chip{width:21px;height:21px;border-radius:4px;border:1px solid #2a3a2a;background:transparent;color:#4a6a4a;font-size:10px;cursor:pointer;font-family:Georgia,serif;padding:0;text-align:center;flex-shrink:0;line-height:21px}
+.rpe-chip.on{border-color:transparent}
 .ex-card{background:rgba(255,255,255,0.02);border:1px solid #1a2a1a;border-radius:10px;padding:12px;margin-bottom:8px}
 .ex-name{font-size:14px;color:#d4c5a0;font-weight:bold;margin-bottom:2px}
 .ex-meta{font-size:11px;color:#4a6a4a;margin-bottom:8px}
@@ -308,20 +315,20 @@ var ZONE2 = {1:"75", 2:"80", 3:"85-90", 4:"90", 5:"45"};
 
 var WED = {
   1: {label:"Zone 2 Run",        isInterval:false, detail:"75 min | Zone 2 — nose breathing only | Deload week — no intervals"},
-  2: {label:"Running Intervals", isInterval:true,  detail:"10 min warmup | 4x5 min hard / 5 min easy | 10 min cooldown — total 60 min"},
-  3: {label:"Running Intervals", isInterval:true,  detail:"10 min warmup | 5x5 min hard / 5 min easy | 10 min cooldown — total 70 min"},
-  4: {label:"Running Intervals", isInterval:true,  detail:"10 min warmup | 5x6 min hard / 5 min easy | 10 min cooldown — total 80 min"},
-  5: {label:"Running Intervals", isInterval:true,  detail:"10 min warmup | 3x5 min hard / 5 min easy | 10 min cooldown — deload volume"}
+  2: {label:"Running Intervals", isInterval:true,  intervals:4, detail:"10 min warmup | 4x5 min hard / 5 min easy | 10 min cooldown — total 60 min"},
+  3: {label:"Running Intervals", isInterval:true,  intervals:5, detail:"10 min warmup | 5x5 min hard / 5 min easy | 10 min cooldown — total 70 min"},
+  4: {label:"Running Intervals", isInterval:true,  intervals:5, detail:"10 min warmup | 5x6 min hard / 5 min easy | 10 min cooldown — total 80 min"},
+  5: {label:"Running Intervals", isInterval:true,  intervals:3, detail:"10 min warmup | 3x5 min hard / 5 min easy | 10 min cooldown — deload volume"}
 };
 
 // All Friday sessions: Stair Climber, bumper plate backpack, 5 lb increments
 // Week 1 exception: carries over exactly from Phase 2, no changes
 var FRI = {
-  1: {pack:25, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown", carryover:true},
-  2: {pack:30, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
-  3: {pack:35, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
-  4: {pack:40, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
-  5: {pack:25, sets:"3x4 min hard / 4 min easy — deload", wrap:""}
+  1: {pack:25, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown", carryover:true, intervals:4},
+  2: {pack:30, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown", intervals:4},
+  3: {pack:35, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown", intervals:5},
+  4: {pack:40, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown", intervals:5},
+  5: {pack:25, sets:"3x4 min hard / 4 min easy — deload", wrap:"", intervals:3}
 };
 
 function getWeekConditioning(w) {
@@ -331,7 +338,7 @@ function getWeekConditioning(w) {
        color:"#7e9ec8", detail:"75 min | Zone 2 — nose breathing only | Fully conversational pace"},
       {id:"stairs", label:"Stair Climber Intervals", day:"Thursday",
        color:"#a07ec8", detail:"25 lb pack | 4x4 min hard / 4 min easy | 8 min warmup + 5 min cooldown | Carries over from Phase 2 unchanged",
-       intNote:"Hard effort — all-out on work intervals", isInterval:true},
+       intNote:"Hard effort — all-out on work intervals", isInterval:true, intervals:4},
       {id:"run2",   label:"Zone 2 Run",              day:"Friday",
        color:"#7e9ec8", detail:"75 min | Zone 2 — nose breathing only | Same effort as Tuesday"}
     ];
@@ -345,12 +352,12 @@ function getWeekConditioning(w) {
      color: wed.isInterval ? "#c87e7e" : "#7e9ec8",
      detail: wed.detail,
      intNote: wed.isInterval ? "Hard effort = 90-95% max — cannot hold conversation, cannot nose breathe" : "",
-     isInterval: wed.isInterval},
+     isInterval: wed.isInterval, intervals: wed.intervals || 0},
     {id:"run2",   label:"Zone 2 Run",              day:"Thursday",
      color:"#7e9ec8", detail: ZONE2[w] + " min | Zone 2 — nose breathing only | Same effort as Tuesday"},
     {id:"fri",    label:"Stair Climber Intervals", day:"Friday",
      color:"#a07ec8", detail: friDetail,
-     intNote:"Hard effort — all-out on work intervals", isInterval:true}
+     intNote:"Hard effort — all-out on work intervals", isInterval:true, intervals: fri.intervals || 0}
   ];
 }
 
@@ -403,6 +410,8 @@ function condKey(w,id)   { return "cond-"+w+"-"+id; }
 function accCntKey(w,sk) { return "w"+w+"-"+sk+"-acnt"; }
 function accKey(w,sk,i,f){ return "w"+w+"-"+sk+"-acc"+i+"-"+f; }
 function wtKey(w)        { return "bw-wk"+w; }
+function intTimeKey(w,id,i){ return "int-"+w+"-"+id+"-"+i+"-time"; }
+function intRpeKey(w,id,i) { return "int-"+w+"-"+id+"-"+i+"-rpe"; }
 function getAccCount(w,sk){ return parseInt(dbGet(accCntKey(w,sk))) || 0; }
 
 function sessionHasLogs(w, sk) {
@@ -491,6 +500,26 @@ function renderOverview() {
   var conds = getWeekConditioning(w), condHtml = "";
   for (var ci = 0; ci < conds.length; ci++) {
     var c = conds[ci], cval = dbGet(condKey(w, c.id));
+    var intSection = "";
+    if (c.isInterval && c.intervals) {
+      intSection = '<div class="int-log-section"><div style="font-size:9px;color:#4a6a4a;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Interval Log</div>';
+      for (var ii = 1; ii <= c.intervals; ii++) {
+        var tKey = intTimeKey(w, c.id, ii);
+        var rKey = intRpeKey(w, c.id, ii);
+        var tVal = escHtml(dbGet(tKey));
+        var curIRpe = dbGetNum(rKey);
+        intSection += '<div class="int-row"><span class="int-num">'+ii+'</span><div style="flex:1;min-width:0">';
+        intSection += '<input class="int-time" type="text" inputmode="text" placeholder="pace / notes" value="'+tVal+'" data-itk="'+tKey+'">';
+        intSection += '<div style="display:flex;gap:3px;align-items:center"><span style="font-size:9px;color:#4a6a4a;flex-shrink:0;margin-right:2px;letter-spacing:1px;text-transform:uppercase">RPE</span>';
+        for (var rv = 1; rv <= 10; rv++) {
+          var onR = (curIRpe === rv);
+          var cs = onR ? 'border-color:'+RPE_COLORS[rv]+';background:'+RPE_COLORS[rv]+'22;color:'+RPE_COLORS[rv] : '';
+          intSection += '<button class="rpe-chip'+(onR?' on':'')+'" data-irk="'+rKey+'" data-irv="'+rv+'" style="'+cs+'">'+rv+'</button>';
+        }
+        intSection += '</div></div></div>';
+      }
+      intSection += '</div>';
+    }
     condHtml +=
       '<div class="cond-card" style="border-left-color:'+c.color+'">'+
       '<div class="cond-header">'+
@@ -498,6 +527,7 @@ function renderOverview() {
       '<div><div class="cond-name">'+c.label+'</div><div class="cond-day">'+c.day+'</div></div></div>'+
       '<div class="cond-detail">'+c.detail+'</div>'+
       (c.isInterval&&c.intNote?'<div class="int-box">'+c.intNote+'</div>':'')+
+      intSection+
       '<textarea class="sm" data-cond="'+c.id+'" placeholder="Notes — duration, effort, how it felt...">'+escHtml(cval)+'</textarea>'+
       '</div>';
   }
@@ -514,6 +544,33 @@ function renderOverview() {
   var condInputs = document.querySelectorAll("[data-cond]");
   for (var cii = 0; cii < condInputs.length; cii++) {
     condInputs[cii].addEventListener("input", function(){ dbSet(condKey(appState.week,this.getAttribute("data-cond")),this.value); });
+  }
+  var itInputs = document.querySelectorAll("[data-itk]");
+  for (var iti = 0; iti < itInputs.length; iti++) {
+    itInputs[iti].addEventListener("input", function(){ dbSet(this.getAttribute("data-itk"),this.value); });
+  }
+  var irkBtns = document.querySelectorAll("[data-irk]");
+  for (var irki = 0; irki < irkBtns.length; irki++) {
+    irkBtns[irki].addEventListener("click", function(){
+      var key = this.getAttribute("data-irk");
+      var val = parseInt(this.getAttribute("data-irv"));
+      dbSet(key, val);
+      var siblings = document.querySelectorAll('[data-irk="'+key+'"]');
+      for (var sc = 0; sc < siblings.length; sc++) {
+        var sv = parseInt(siblings[sc].getAttribute("data-irv"));
+        var isOn = (sv === val);
+        siblings[sc].className = "rpe-chip"+(isOn?" on":"");
+        if (isOn) {
+          siblings[sc].style.borderColor = RPE_COLORS[sv];
+          siblings[sc].style.background = RPE_COLORS[sv]+"22";
+          siblings[sc].style.color = RPE_COLORS[sv];
+        } else {
+          siblings[sc].style.borderColor = "";
+          siblings[sc].style.background = "";
+          siblings[sc].style.color = "";
+        }
+      }
+    });
   }
 }
 
@@ -747,13 +804,35 @@ function buildReport(w, sk) {
   lines.push("RPE        : "+(rpe?rpe+"/10":"not rated"));
   lines.push("Soreness   : "+(dbGetArr(feelKey(w,sk,"sore")).join(", ")||"none"));
   lines.push("Stalling   : "+(dbGetArr(feelKey(w,sk,"stall")).join(", ")||"none"));
-  var conds=getWeekConditioning(w), hasNote=false;
-  for (var ci=0; ci<conds.length; ci++) { if (db[condKey(w,conds[ci].id)]&&db[condKey(w,conds[ci].id)].trim()){ hasNote=true; break; } }
-  if (hasNote) {
-    lines.push("","CONDITIONING NOTES",SEP);
+  var conds=getWeekConditioning(w), hasNote=false, hasIntData=false;
+  for (var ci=0; ci<conds.length; ci++) {
+    if (db[condKey(w,conds[ci].id)]&&db[condKey(w,conds[ci].id)].trim()) hasNote=true;
+    if (conds[ci].isInterval&&conds[ci].intervals) {
+      for (var ii=1; ii<=conds[ci].intervals; ii++) {
+        if (db[intTimeKey(w,conds[ci].id,ii)]||db[intRpeKey(w,conds[ci].id,ii)]){ hasIntData=true; break; }
+      }
+    }
+  }
+  if (hasNote||hasIntData) {
+    lines.push("","CONDITIONING",SEP);
     for (var ci2=0; ci2<conds.length; ci2++) {
-      var cn=db[condKey(w,conds[ci2].id)];
-      if (cn&&cn.trim()) lines.push(conds[ci2].label+" ("+conds[ci2].day+"): "+cn.trim());
+      var c2=conds[ci2], cn=db[condKey(w,c2.id)];
+      var hasC2Int=false;
+      if (c2.isInterval&&c2.intervals) {
+        for (var ii2=1; ii2<=c2.intervals; ii2++) {
+          if (db[intTimeKey(w,c2.id,ii2)]||db[intRpeKey(w,c2.id,ii2)]){ hasC2Int=true; break; }
+        }
+      }
+      if (hasC2Int||(cn&&cn.trim())) {
+        lines.push(c2.label+" ("+c2.day+")");
+        if (hasC2Int) {
+          for (var ii3=1; ii3<=c2.intervals; ii3++) {
+            var t=db[intTimeKey(w,c2.id,ii3)]||"", r=db[intRpeKey(w,c2.id,ii3)]||"";
+            if (t||r) lines.push("  Int "+ii3+": "+(t?t+(r?" — ":""):"")+(r?"RPE "+r:""));
+          }
+        }
+        if (cn&&cn.trim()) lines.push("  Notes: "+cn.trim());
+      }
     }
   }
   var note=db[noteKey(w,sk)]; if (note&&note.trim()) lines.push("","NOTES",SEP,note.trim());
