@@ -250,9 +250,9 @@ var TOTAL_WEEKS = 5;
 
 var WG = {
   1: {label:"Deload",       effort:1, desc:"Lifting deloads only — 3 sets, hold all Phase 2 weights, no progression. Cardio unchanged. Body recovers before the interval block begins."},
-  2: {label:"Reintroduce",  effort:3, desc:"New lifting structure begins. First running intervals Wednesday 4x5 min. Incline treadmill intervals Friday 30 lb pack. Build momentum into the peak block."},
+  2: {label:"Reintroduce",  effort:3, desc:"New lifting structure begins. First running intervals Wednesday 4x5 min. Stair climber Friday 30 lb pack 4x4. Build momentum into the peak block."},
   3: {label:"Build",        effort:4, desc:"Running intervals increase to 5x5 min. Stair climber 35 lb pack 5x4. Full body maintenance lifting. Aerobic volume peaks this week."},
-  4: {label:"Peak",         effort:5, desc:"Hardest week of Phase 3. 5x6 min running intervals. 40 lb pack incline treadmill. This week defines your Phase 4 entry point."},
+  4: {label:"Peak",         effort:5, desc:"Hardest week of Phase 3. 5x6 min running intervals. Stair climber 40 lb pack 5x4. This week defines your Phase 4 entry point."},
   5: {label:"Phase 3 Out",  effort:1, desc:"Full recovery before Phase 4 August begins. Drop all volume. Keep intensity. Arrive at Phase 4 recovered, sharp, and ready to build."}
 };
 
@@ -301,19 +301,19 @@ var WED = {
   5: {label:"Running Intervals", isInterval:true,  detail:"10 min warmup | 3x5 min hard / 5 min easy | 10 min cooldown — deload volume"}
 };
 
-// Odd weeks = Stair Climber, Even weeks = Incline Treadmill 10-12% grade
+// All Friday sessions use Stair Climber — bumper plate backpack, 5 lb increments
 var FRI = {
-  1: {equip:"Stair Climber",     pack:25, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
-  2: {equip:"Incline Treadmill", pack:30, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown", grade:"10-12% grade"},
-  3: {equip:"Stair Climber",     pack:35, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
-  4: {equip:"Incline Treadmill", pack:40, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown", grade:"10-12% grade"},
-  5: {equip:"Stair Climber",     pack:25, sets:"3x4 min hard / 4 min easy — deload", wrap:""}
+  1: {pack:25, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
+  2: {pack:30, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
+  3: {pack:35, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
+  4: {pack:40, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
+  5: {pack:25, sets:"3x4 min hard / 4 min easy — deload", wrap:""}
 };
 
 function getWeekConditioning(w) {
   var wed = WED[w], fri = FRI[w];
-  var friDetail = fri.pack + " lb pack | " + fri.sets + (fri.grade ? " | " + fri.grade : "") + (fri.wrap ? " | " + fri.wrap : "");
-  var friLabel  = fri.equip + " Intervals";
+  var friDetail = fri.pack + " lb pack (bumper plates) | " + fri.sets + (fri.wrap ? " | " + fri.wrap : "");
+  var friLabel  = "Stair Climber Intervals";
   return [
     {id:"run1",   label:"Zone 2 Run",  day:"Tuesday",
      color:"#7e9ec8", detail: ZONE2[w] + " min | Zone 2 — nose breathing only | Fully conversational pace"},
