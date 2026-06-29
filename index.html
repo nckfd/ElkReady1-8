@@ -301,9 +301,10 @@ var WED = {
   5: {label:"Running Intervals", isInterval:true,  detail:"10 min warmup | 3x5 min hard / 5 min easy | 10 min cooldown — deload volume"}
 };
 
-// All Friday sessions use Stair Climber — bumper plate backpack, 5 lb increments
+// All Friday sessions: Stair Climber, bumper plate backpack, 5 lb increments
+// Week 1 exception: carries over exactly from Phase 2, no changes
 var FRI = {
-  1: {pack:25, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
+  1: {pack:25, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown", carryover:true},
   2: {pack:30, sets:"4x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
   3: {pack:35, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
   4: {pack:40, sets:"5x4 min hard / 4 min easy", wrap:"8 min warmup + 5 min cooldown"},
@@ -312,7 +313,9 @@ var FRI = {
 
 function getWeekConditioning(w) {
   var wed = WED[w], fri = FRI[w];
-  var friDetail = fri.pack + " lb pack (bumper plates) | " + fri.sets + (fri.wrap ? " | " + fri.wrap : "");
+  var packNote = fri.carryover ? " lb pack" : " lb pack (bumper plates)";
+  var carryNote = fri.carryover ? " | Carries over from Phase 2 unchanged" : "";
+  var friDetail = fri.pack + packNote + " | " + fri.sets + (fri.wrap ? " | " + fri.wrap : "") + carryNote;
   var friLabel  = "Stair Climber Intervals";
   return [
     {id:"run1",   label:"Zone 2 Run",  day:"Tuesday",
